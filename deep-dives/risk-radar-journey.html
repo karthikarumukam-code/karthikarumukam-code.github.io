@@ -1,0 +1,474 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Risk Radar Journey</title>
+<style>
+  :root{
+    --bg:#F2F5FB;
+    --surface:#FFFFFF;
+    --surface-2:#E9EFF9;
+    --text:#101828;
+    --text-muted:#5B6577;
+    --border:#D7E0EE;
+    --accent:#0C8F87;
+    --accent-soft:#DEF4F1;
+    --green:#0E9A63;
+    --green-soft:#E1F6EB;
+    --amber:#B4650B;
+    --amber-soft:#FCF0DA;
+    --red:#C13F32;
+    --red-soft:#FBE8E5;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0A0F1C;
+      --surface:#121B2D;
+      --surface-2:#182338;
+      --text:#E8EDF7;
+      --text-muted:#93A0BC;
+      --border:#26314A;
+      --accent:#4FE6D8;
+      --accent-soft:rgba(79,230,216,0.12);
+      --green:#3ED18E;
+      --green-soft:rgba(62,209,142,0.14);
+      --amber:#F2B84D;
+      --amber-soft:rgba(242,184,77,0.14);
+      --red:#F27A69;
+      --red-soft:rgba(242,122,105,0.14);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0A0F1C;
+    --surface:#121B2D;
+    --surface-2:#182338;
+    --text:#E8EDF7;
+    --text-muted:#93A0BC;
+    --border:#26314A;
+    --accent:#4FE6D8;
+    --accent-soft:rgba(79,230,216,0.12);
+    --green:#3ED18E;
+    --green-soft:rgba(62,209,142,0.14);
+    --amber:#F2B84D;
+    --amber-soft:rgba(242,184,77,0.14);
+    --red:#F27A69;
+    --red-soft:rgba(242,122,105,0.14);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Manrope',system-ui,sans-serif;
+    line-height:1.5;
+    padding-inline:20px;
+  }
+  h1,h2,h3{
+    font-family:'Sora',system-ui,sans-serif;
+    text-wrap:balance;
+    margin:0;
+  }
+  .mono{
+    font-family:'JetBrains Mono',ui-monospace,monospace;
+  }
+  .container{max-width:880px;margin:0 auto;}
+
+  /* header */
+  header{
+    position:sticky;
+    top:env(safe-area-inset-top,0px);
+    z-index:5;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+    margin-inline:-20px;
+    padding:14px 20px;
+  }
+  .header-row{
+    max-width:880px;margin:0 auto;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-mark{
+    width:28px;height:28px;border-radius:50%;
+    background:conic-gradient(from 0deg, var(--accent), transparent 65%);
+    position:relative;flex:none;
+  }
+  .brand-mark::after{
+    content:'';position:absolute;inset:7px;border-radius:50%;background:var(--bg);
+  }
+  .brand-name{font-family:'Sora';font-weight:700;font-size:15px;letter-spacing:.2px;}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);letter-spacing:.3px;}
+  .dot{width:9px;height:9px;border-radius:50%;flex:none;}
+  .dot.g{background:var(--green);}
+  .dot.a{background:var(--amber);}
+  .dot.r{background:var(--red);border:1.5px solid var(--red);background:transparent;}
+
+  /* hero */
+  .hero{padding:56px 0 36px;text-align:left;position:relative;}
+  .eyebrow{
+    font-family:'JetBrains Mono';font-size:11px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--accent);margin-bottom:14px;display:block;
+  }
+  .hero h1{font-size:clamp(28px,4.6vw,42px);font-weight:800;max-width:16ch;}
+  .hero p{max-width:56ch;color:var(--text-muted);font-size:16px;margin-top:14px;}
+
+  @media (prefers-reduced-motion: no-preference){
+    .radar-sweep{animation:spin 6s linear infinite;}
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .radar-wrap{
+    position:absolute;right:0;top:44px;width:120px;height:120px;
+    border-radius:50%;border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  .radar-wrap::before,.radar-wrap::after{
+    content:'';position:absolute;border-radius:50%;border:1px solid var(--border);
+  }
+  .radar-wrap::before{inset:20px;}
+  .radar-wrap::after{inset:40px;}
+  .radar-sweep{
+    position:absolute;inset:0;
+    background:conic-gradient(from 0deg, var(--accent-soft), transparent 40%);
+  }
+  @media (max-width:700px){ .radar-wrap{display:none;} }
+
+  /* overview strip */
+  .overview{
+    display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:34px;
+  }
+  .ov-pill{
+    font-family:'JetBrains Mono';font-size:11.5px;padding:7px 12px;border-radius:999px;
+    background:var(--surface);border:1px solid var(--border);color:var(--text);
+    display:flex;align-items:center;gap:7px;text-decoration:none;white-space:nowrap;
+  }
+  .ov-arrow{color:var(--text-muted);font-size:13px;}
+
+  /* section headings */
+  section{padding-block:40px;}
+  .section-head{margin-bottom:22px;}
+  .section-head .eyebrow{margin-bottom:8px;}
+  .section-head h2{font-size:22px;font-weight:700;}
+
+  /* mechanism figure */
+  figure{margin:0;padding:22px;background:var(--surface);border:1px solid var(--border);border-radius:16px;}
+  figure svg{width:100%;height:auto;display:block;}
+  figcaption{
+    margin-top:14px;font-size:13.5px;color:var(--text-muted);max-width:60ch;
+  }
+  .line-neutral{stroke:var(--text-muted);stroke-width:1.6;fill:none;}
+  .line-accent{stroke:var(--accent);stroke-width:2.4;fill:none;}
+  .line-blocked{stroke:var(--red);stroke-width:1.6;fill:none;stroke-dasharray:4 4;}
+  .arrow-neutral{fill:var(--text-muted);}
+  .arrow-accent{fill:var(--accent);}
+  .node-box{fill:var(--surface);stroke:var(--border);stroke-width:1.4;}
+  .node-box-accent{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8;}
+  .node-text{fill:var(--text);font-family:'Manrope';font-weight:700;font-size:13px;}
+  .zone-label{fill:var(--text-muted);font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:1.5px;}
+  .boundary-line{stroke:var(--text-muted);stroke-width:1.4;stroke-dasharray:5 5;}
+  .boundary-text{fill:var(--text-muted);font-family:'JetBrains Mono';font-size:10px;letter-spacing:1px;}
+  .blocked-text{fill:var(--red);font-family:'JetBrains Mono';font-size:10px;letter-spacing:.5px;}
+
+  /* timeline */
+  .timeline{position:relative;}
+  .timeline::before{
+    content:'';position:absolute;left:28px;top:6px;bottom:6px;width:2px;background:var(--border);
+  }
+  .stage{
+    position:relative;display:grid;grid-template-columns:56px 1fr;gap:18px;
+    padding-block:20px;
+  }
+  .stage-num{
+    position:relative;z-index:1;
+    width:40px;height:40px;margin-left:8px;border-radius:50%;
+    background:var(--surface);border:1.6px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono';font-weight:500;font-size:14px;color:var(--text-muted);
+  }
+  .stage.built .stage-num{border-color:var(--accent);color:var(--accent);}
+  .stage-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    padding:18px 20px;
+  }
+  .stage-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+  .stage-title-row h3{font-size:16.5px;font-weight:700;}
+  .chip{
+    font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.4px;padding:3px 9px;border-radius:999px;
+    white-space:nowrap;
+  }
+  .chip.built{background:var(--green-soft);color:var(--green);}
+  .chip.note{background:var(--surface-2);color:var(--text-muted);}
+  .chip.guardrail{background:var(--accent-soft);color:var(--accent);}
+  .stage-card ul{margin:0;padding-left:18px;color:var(--text-muted);font-size:14px;}
+  .stage-card li{margin-bottom:3px;}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+  .tag{
+    font-size:11px;padding:4px 9px;border-radius:999px;border:1px solid var(--accent);color:var(--accent);
+    background:var(--accent-soft);
+  }
+
+  /* branch cards */
+  .branches{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:640px){ .branches{grid-template-columns:1fr;} }
+  .branch-card{border-radius:14px;padding:20px;border:1px solid var(--border);background:var(--surface);}
+  .branch-card.planned{border-style:dashed;border-color:var(--red);background:var(--red-soft);}
+  .branch-card h3{font-size:16px;margin-bottom:6px;}
+  .branch-card ul{margin:10px 0 0;padding-left:18px;color:var(--text-muted);font-size:13.5px;}
+  .branch-card .chip{margin-top:12px;display:inline-block;}
+  .chip.planned{background:transparent;color:var(--red);border:1px solid var(--red);}
+
+  footer{
+    padding:32px 0 40px;border-top:1px solid var(--border);margin-top:20px;
+  }
+  footer p{color:var(--text-muted);font-size:13px;max-width:60ch;}
+  footer .mono{font-size:11.5px;color:var(--text-muted);margin-top:10px;display:block;}
+</style>
+
+<header>
+  <div class="header-row">
+    <div class="brand">
+      <div class="brand-mark"><div class="radar-sweep" style="position:absolute;inset:0;border-radius:50%;"></div></div>
+      <span class="brand-name">Risk Radar Journey</span>
+    </div>
+    <div class="legend">
+      <span class="legend-item"><span class="dot g"></span>Built</span>
+      <span class="legend-item"><span class="dot a"></span>Built, with a caveat</span>
+      <span class="legend-item"><span class="dot r"></span>Planned, not built</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <section class="hero">
+    <div class="radar-wrap"><div class="radar-sweep"></div></div>
+    <span class="eyebrow">AI Project Risk Radar — PM Workflow</span>
+    <h1>From opening a project to a decision only the PM makes.</h1>
+    <p>Nine steps, traced from the actual running app — not an idealized design. Every
+    stage below is a real screen a Project Manager sees today, in the order they see it.</p>
+
+    <div class="overview">
+      <a class="ov-pill" href="#s1"><span class="dot g"></span>Open Project</a>
+      <span class="ov-arrow">→</span>
+      <a class="ov-pill" href="#s2"><span class="dot g"></span>KPI Strip</a>
+      <span class="ov-arrow">→</span>
+      <a class="ov-pill" href="#s3"><span class="dot g"></span>Assessment</a>
+      <span class="ov-arrow">→</span>
+      <a class="ov-pill" href="#s4"><span class="dot g"></span>Trajectory</a>
+      <span class="ov-arrow">→</span>
+      <a class="ov-pill" href="#s5"><span class="dot g"></span>Risk List</a>
+      <span class="ov-arrow">→</span>
+      <a class="ov-pill" href="#s6"><span class="dot g"></span>Evidence</a>
+      <span class="ov-arrow">→</span>
+      <a class="ov-pill" href="#s7"><span class="dot g"></span>AI Rec.</a>
+      <span class="ov-arrow">→</span>
+      <a class="ov-pill" href="#s8"><span class="dot g"></span>PM Reviews</a>
+      <span class="ov-arrow">→</span>
+      <a class="ov-pill" href="#s9"><span class="dot g"></span>PM Decides</a>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">The one rule that shapes everything</span>
+      <h2>Where the app's authority stops</h2>
+    </div>
+    <figure>
+      <svg viewBox="0 0 820 260" role="img" aria-label="Evidence flows into AI interpretation and a recommendation, which the PM reviews and decides on; a parallel path to an automated action is explicitly blocked and never happens.">
+        <defs>
+          <marker id="mArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="arrow-neutral"/>
+          </marker>
+          <marker id="mArrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="arrow-accent"/>
+          </marker>
+        </defs>
+
+        <text x="20" y="14" class="zone-label">INSIDE THE APP</text>
+        <text x="400" y="164" class="zone-label">THE PM'S OWN DECISION</text>
+
+        <rect x="20" y="24" width="150" height="56" rx="10" class="node-box"/>
+        <text x="95" y="57" text-anchor="middle" class="node-text">Evidence</text>
+
+        <rect x="210" y="24" width="170" height="56" rx="10" class="node-box"/>
+        <text x="295" y="57" text-anchor="middle" class="node-text">AI Interpretation</text>
+
+        <rect x="420" y="24" width="170" height="56" rx="10" class="node-box"/>
+        <text x="505" y="57" text-anchor="middle" class="node-text">Recommendation</text>
+
+        <line x1="170" y1="52" x2="206" y2="52" class="line-neutral" marker-end="url(#mArrow)"/>
+        <line x1="380" y1="52" x2="416" y2="52" class="line-neutral" marker-end="url(#mArrow)"/>
+
+        <line x1="505" y1="80" x2="505" y2="112" class="boundary-line"/>
+        <line x1="20" y1="118" x2="800" y2="118" class="boundary-line"/>
+        <text x="410" y="112" text-anchor="middle" class="boundary-text">— nothing here acts automatically —</text>
+
+        <line x1="505" y1="118" x2="640" y2="118" class="line-blocked"/>
+        <circle cx="655" cy="118" r="13" fill="none" stroke="var(--red)" stroke-width="2"/>
+        <line x1="646" y1="109" x2="664" y2="127" stroke="var(--red)" stroke-width="2"/>
+        <text x="655" y="146" text-anchor="middle" class="blocked-text">Automated action</text>
+        <text x="655" y="158" text-anchor="middle" class="blocked-text">— blocked by design</text>
+
+        <line x1="505" y1="118" x2="505" y2="156" class="line-accent" marker-end="url(#mArrowAccent)"/>
+
+        <rect x="420" y="160" width="170" height="52" rx="10" class="node-box"/>
+        <text x="505" y="191" text-anchor="middle" class="node-text">PM Reviews</text>
+
+        <line x1="590" y1="186" x2="626" y2="186" class="line-accent" marker-end="url(#mArrowAccent)"/>
+
+        <rect x="630" y="160" width="160" height="52" rx="10" class="node-box-accent"/>
+        <text x="710" y="191" text-anchor="middle" class="node-text">PM Decides</text>
+      </svg>
+      <figcaption>Evidence and AI interpretation feed a recommendation, which the PM reviews. The only path onward is the PM's own decision — the parallel path to an automated action is a boundary the app cannot cross, not just a missing feature (ROADMAP.md guardrail: "no automated action taken — must remain true, every PR review").</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">Step by step</span>
+      <h2>The end-to-end walkthrough</h2>
+    </div>
+
+    <div class="timeline">
+
+      <div class="stage built" id="s1">
+        <div class="stage-num">1</div>
+        <div class="stage-card">
+          <div class="stage-title-row"><h3>Open a Project</h3><span class="chip built">Built</span></div>
+          <ul>
+            <li>Sidebar project selector (dropdown) + extraction-mode picker</li>
+            <li>Alternate entry: Portfolio Overview → click any project card</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stage built" id="s2">
+        <div class="stage-num">2</div>
+        <div class="stage-card">
+          <div class="stage-title-row"><h3>Read the KPI Strip</h3><span class="chip built">Built</span></div>
+          <ul>
+            <li>PM Reported RAG · AI Risk Assessment · Active Risks · Confidence · Target Date</li>
+            <li>"Assessment confidence — why" expander: schedule/register hygiene + cadence</li>
+          </ul>
+          <div class="tags"><span class="tag">Quick Health Check</span><span class="tag">Low / Conflicting Evidence</span></div>
+        </div>
+      </div>
+
+      <div class="stage built" id="s3">
+        <div class="stage-num">3</div>
+        <div class="stage-card">
+          <div class="stage-title-row"><h3>See the Overall Assessment</h3><span class="chip built">Built</span></div>
+          <ul>
+            <li>Primary drivers behind the current RAG</li>
+            <li>Dimension-health pills, trend arrow, divergence-from-PM note</li>
+          </ul>
+          <div class="tags"><span class="tag">Why Amber?</span><span class="tag">RED Project</span></div>
+        </div>
+      </div>
+
+      <div class="stage built" id="s4">
+        <div class="stage-num">4</div>
+        <div class="stage-card">
+          <div class="stage-title-row"><h3>Check the Risk Trajectory</h3><span class="chip built">Strongest feature</span></div>
+          <ul>
+            <li>Weekly signal counts vs. PM-reported RAG vs. the AI's own weekly read</li>
+            <li>"Foresight" callout — did the AI lead, stay ahead, or self-correct</li>
+          </ul>
+          <div class="tags"><span class="tag">RAG Changed</span><span class="tag">Weekly Review</span><span class="tag">Emerging Risk</span></div>
+        </div>
+      </div>
+
+      <div class="stage built" id="s5">
+        <div class="stage-num">5</div>
+        <div class="stage-card">
+          <div class="stage-title-row"><h3>Scan the Risk List</h3><span class="chip built">Built</span></div>
+          <ul>
+            <li>Collapsible risk cards — severity + score</li>
+            <li>New-risk and critical banners surfaced above the list</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stage built" id="s6">
+        <div class="stage-num">6</div>
+        <div class="stage-card">
+          <div class="stage-title-row"><h3>Open a Risk's Evidence</h3><span class="chip built">Built</span></div>
+          <ul>
+            <li>Category, source (RAID / dependency / plan / compound), rule-based P·I·U</li>
+            <li>LLM P·I·U with a ✓ agree / ⚠ diverge indicator + rationale</li>
+            <li>Quoted evidence — "why this was flagged"</li>
+          </ul>
+          <div class="tags"><span class="tag">Investigate a Specific Risk</span></div>
+        </div>
+      </div>
+
+      <div class="stage built" id="s7">
+        <div class="stage-num">7</div>
+        <div class="stage-card">
+          <div class="stage-title-row"><h3>Read the AI Recommendation</h3><span class="chip note">Read-only, by design</span></div>
+          <ul>
+            <li>Deterministic Immediate / Short-term / Contingency template</li>
+            <li>Optional LLM elaboration — explicitly labeled read-only, no edit/dismiss/regenerate</li>
+          </ul>
+          <div class="tags"><span class="tag">Validate an AI Recommendation</span></div>
+        </div>
+      </div>
+
+      <div class="stage built" id="s8">
+        <div class="stage-num">8</div>
+        <div class="stage-card">
+          <div class="stage-title-row"><h3>PM Reviews</h3><span class="chip built">Built</span></div>
+          <ul>
+            <li>Every AI output up to this point is read-only — nothing pre-selected or pre-submitted</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stage built" id="s9">
+        <div class="stage-num">9</div>
+        <div class="stage-card">
+          <div class="stage-title-row"><h3>PM Decides</h3><span class="chip guardrail">Guardrail</span></div>
+          <ul>
+            <li>Nothing in the app writes to Jira, sends an email, or escalates on its own</li>
+            <li>"No automated action taken" — must remain true, every PR review (ROADMAP.md)</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">Outside the main spine</span>
+      <h2>One more built view, one that's still on the roadmap</h2>
+    </div>
+    <div class="branches">
+      <div class="branch-card">
+        <div class="stage-title-row"><h3>Portfolio RAG View</h3><span class="chip built">Built</span></div>
+        <ul>
+          <li>Cross-project card grid — RAG, divergence, and "AI called it early" badges</li>
+          <li>Portfolio-wide Gantt across every project</li>
+        </ul>
+        <span class="chip note">An explicit bonus, not expanded further (ROADMAP.md)</span>
+      </div>
+      <div class="branch-card planned">
+        <div class="stage-title-row"><h3>Steering-Committee Export</h3><span class="chip planned">Not built</span></div>
+        <ul>
+          <li>An executive-ready summary a PM could hand off, instead of screenshotting the dashboard</li>
+          <li>No export or exec view exists in the app today</li>
+        </ul>
+        <span class="chip planned">Later — proposed 2026-09-23, pending team sign-off</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>Nine real steps, one unbroken rule:</strong> the app synthesizes evidence into a recommendation — the PM is always the one who decides.</p>
+    <span class="mono">Traced from mvp_app.py / pages/mvp_1_Portfolio_Overview.py · see discovery/user-research/05-pm-user-journeys.md</span>
+  </footer>
+
+</div>
+
+<style>.pf-back{position:fixed;left:12px;bottom:12px;z-index:2147483000;font:600 13px/1 system-ui,Segoe UI,Arial,sans-serif;background:#1f4e79;color:#fff;text-decoration:none;padding:9px 13px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.3);opacity:.92}.pf-back:hover{opacity:1}@media print{.pf-back{display:none}}</style><a class="pf-back" href="../projects/risk-radar.html">&larr; Back to case study</a></body></html>

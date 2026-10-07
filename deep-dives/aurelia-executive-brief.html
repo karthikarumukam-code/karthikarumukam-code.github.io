@@ -1,0 +1,597 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>Aurelia Onboarding Assistant — Executive Brief</title>
+<style>
+  :root {
+    --bg: #F6F3EC;
+    --surface: #FFFFFF;
+    --surface-2: #FBF9F4;
+    --border: #E3DFD3;
+    --text: #201D17;
+    --text-muted: #746F62;
+    --accent: #9C6B28;
+    --accent-soft: #EFDFC3;
+    --accent-ring: #C68A3D;
+    --good: #3F7D53;
+    --good-soft: #DCEBDF;
+    --warn: #A6472A;
+    --warn-soft: #F3DCD1;
+    --amber: #A9791E;
+    --amber-soft: #F1E4C3;
+    --shadow: 0 1px 2px rgba(32,29,23,0.06), 0 10px 30px -12px rgba(32,29,23,0.20);
+    --font-display: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15161B; --surface: #1C1E24; --surface-2: #21232A; --border: #2C2F37;
+      --text: #ECE8DE; --text-muted: #9A968A; --accent: #D9A54F; --accent-soft: #3A2E1A;
+      --accent-ring: #E3B562; --good: #6FBF86; --good-soft: #1E3324;
+      --warn: #E08A64; --warn-soft: #3B241C; --amber: #E0B854; --amber-soft: #3A2E12;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 14px 36px -14px rgba(0,0,0,0.65);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #15161B; --surface: #1C1E24; --surface-2: #21232A; --border: #2C2F37;
+    --text: #ECE8DE; --text-muted: #9A968A; --accent: #D9A54F; --accent-soft: #3A2E1A;
+    --accent-ring: #E3B562; --good: #6FBF86; --good-soft: #1E3324;
+    --warn: #E08A64; --warn-soft: #3B241C; --amber: #E0B854; --amber-soft: #3A2E12;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 14px 36px -14px rgba(0,0,0,0.65);
+  }
+  :root[data-theme="light"] {
+    --bg: #F6F3EC; --surface: #FFFFFF; --surface-2: #FBF9F4; --border: #E3DFD3;
+    --text: #201D17; --text-muted: #746F62; --accent: #9C6B28; --accent-soft: #EFDFC3;
+    --accent-ring: #C68A3D; --good: #3F7D53; --good-soft: #DCEBDF;
+    --warn: #A6472A; --warn-soft: #F3DCD1; --amber: #A9791E; --amber-soft: #F1E4C3;
+    --shadow: 0 1px 2px rgba(32,29,23,0.06), 0 10px 30px -12px rgba(32,29,23,0.20);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+  .icon { width: 1em; height: 1em; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+  .deck {
+    position: relative;
+    width: 100vw; height: 100vh;
+    overflow: hidden;
+  }
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 8vh 8vw 12vh;
+    opacity: 0; visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .slide.active { opacity: 1; visibility: visible; transform: translateY(0); z-index: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .slide { transition: opacity 0.01s linear; transform: none; }
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: clamp(11px, 1.1vw, 13px);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 14px;
+  }
+  .eyebrow .icon { color: var(--accent); }
+
+  .headline {
+    font-size: clamp(28px, 4.6vw, 54px);
+    font-weight: 600;
+    line-height: 1.12;
+    max-width: 16ch;
+    text-align: center;
+  }
+  .sub {
+    margin-top: 14px;
+    font-size: clamp(14px, 1.5vw, 18px);
+    color: var(--text-muted);
+    max-width: 46ch;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .footnote {
+    margin-top: 26px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text-muted);
+    text-align: center;
+    max-width: 60ch;
+  }
+
+  /* ---- title slide ---- */
+  .mark {
+    width: 64px; height: 64px; border-radius: 16px;
+    background: var(--accent-soft); border: 1px solid var(--accent-ring);
+    color: var(--accent); font-family: var(--font-display); font-weight: 600; font-size: 30px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow);
+  }
+  .meta-line {
+    margin-top: 30px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex; gap: 18px; flex-wrap: wrap; justify-content: center;
+  }
+
+  /* ---- generic grid of cards ---- */
+  .cards {
+    display: grid;
+    gap: 20px;
+    margin-top: 8px;
+    width: 100%;
+    max-width: 1040px;
+  }
+  .cards.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .cards.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 860px) {
+    .cards.cols-3, .cards.cols-4 { grid-template-columns: 1fr 1fr; }
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 18px;
+    box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 10px;
+    text-align: center;
+    align-items: center;
+  }
+  .card .icon-wrap {
+    width: 46px; height: 46px; border-radius: 12px;
+    background: var(--accent-soft); border: 1px solid var(--accent-ring); color: var(--accent);
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+  }
+  .card.warn .icon-wrap { background: var(--warn-soft); border-color: color-mix(in srgb, var(--warn) 45%, var(--border)); color: var(--warn); }
+  .card.good .icon-wrap { background: var(--good-soft); border-color: color-mix(in srgb, var(--good) 45%, var(--border)); color: var(--good); }
+  .card h3 { font-size: 16.5px; font-weight: 600; font-family: var(--font-body); }
+  .card p { margin: 0; font-size: 13px; color: var(--text-muted); line-height: 1.45; }
+  .card .stat { font-family: var(--font-mono); font-size: 12px; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+  /* ---- options comparison ---- */
+  .opt-card { position: relative; }
+  .opt-tag {
+    position: absolute; top: -10px; right: 14px;
+    font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 3px 9px;
+    color: var(--text-muted);
+  }
+  .opt-tag.selected { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, var(--border)); background: var(--good-soft); }
+  .opt-tag.gated { color: var(--amber); border-color: color-mix(in srgb, var(--amber) 45%, var(--border)); background: var(--amber-soft); }
+
+  /* ---- feasibility grid ---- */
+  .fgrid {
+    width: 100%; max-width: 760px;
+    display: grid;
+    grid-template-columns: 1.4fr repeat(3, 0.8fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-top: 10px;
+  }
+  .fgrid > div { background: var(--surface); padding: 12px 10px; display: flex; align-items: center; }
+  .fgrid .fhead { background: var(--surface-2); font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); justify-content: center; }
+  .fgrid .dimlabel { gap: 8px; font-size: 13.5px; font-weight: 600; }
+  .fgrid .dimlabel .icon { color: var(--accent); }
+  .dot-cell { justify-content: center; }
+  .rag { width: 13px; height: 13px; border-radius: 50%; display: inline-block; }
+  .rag.g { background: var(--good); }
+  .rag.a { background: var(--amber); }
+  .rag.r { background: var(--warn); }
+  .legend { display: flex; gap: 20px; margin-top: 16px; font-size: 12px; color: var(--text-muted); align-items: center; }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+
+  /* ---- gate slide ---- */
+  .gate-row { display: flex; gap: 18px; align-items: center; margin-top: 10px; flex-wrap: wrap; justify-content: center; }
+  .gate-chip {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--warn-soft); border: 1px solid color-mix(in srgb, var(--warn) 40%, var(--border));
+    color: var(--warn); border-radius: 12px; padding: 12px 16px; font-weight: 600; font-size: 14px;
+    box-shadow: var(--shadow);
+  }
+  .gate-chip .icon { width: 20px; height: 20px; }
+  .arrow-between { color: var(--text-muted); }
+
+  /* ---- decision flow ---- */
+  .flow { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; justify-content: center; }
+  .flow-node {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 20px; text-align: center; min-width: 190px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .flow-node .icon-wrap { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .flow-node.now .icon-wrap { background: var(--good-soft); color: var(--good); border: 1px solid color-mix(in srgb, var(--good) 40%, var(--border)); }
+  .flow-node.gate .icon-wrap { background: var(--amber-soft); color: var(--amber); border: 1px solid color-mix(in srgb, var(--amber) 40%, var(--border)); }
+  .flow-node.future .icon-wrap { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); }
+  .flow-node h3 { font-size: 15px; font-family: var(--font-body); font-weight: 700; }
+  .flow-node p { margin: 0; font-size: 12px; color: var(--text-muted); }
+  .flow .icon.chevron { width: 22px; height: 22px; color: var(--text-muted); }
+
+  /* ---- scope columns ---- */
+  .scope-cols { display: flex; gap: 28px; margin-top: 10px; width: 100%; max-width: 900px; justify-content: center; flex-wrap: wrap; }
+  .scope-col { flex: 1; min-width: 280px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; box-shadow: var(--shadow); }
+  .scope-col h3 { font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; }
+  .scope-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .scope-list li { display: flex; align-items: center; gap: 10px; font-size: 13.5px; }
+  .scope-list .icon { color: var(--accent); width: 17px; height: 17px; }
+  .scope-col.gated .icon { color: var(--amber); }
+
+  /* ---- 9 conditions grid ---- */
+  .cond-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px; max-width: 760px; width: 100%; }
+  @media (max-width: 700px) { .cond-grid { grid-template-columns: repeat(2, 1fr); } }
+  .cond {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 12px; display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow);
+  }
+  .cond.hard { border-color: color-mix(in srgb, var(--warn) 45%, var(--border)); background: var(--warn-soft); }
+  .cond .num {
+    font-family: var(--font-mono); font-size: 11px; color: var(--surface); background: var(--accent);
+    width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none;
+  }
+  .cond.hard .num { background: var(--warn); }
+  .cond span.label { font-size: 12.5px; font-weight: 600; line-height: 1.25; }
+
+  /* ---- timeline ---- */
+  .timeline { display: flex; align-items: flex-start; gap: 0; margin-top: 20px; width: 100%; max-width: 900px; justify-content: center; }
+  .tl-step { display: flex; flex-direction: column; align-items: center; gap: 10px; flex: 1; position: relative; text-align: center; padding: 0 6px; }
+  .tl-step:not(:last-child)::after {
+    content: ""; position: absolute; top: 20px; left: 55%; width: 90%; height: 1px; background: var(--border);
+  }
+  .tl-dot {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--surface); border: 1px solid var(--accent-ring);
+    color: var(--accent); display: flex; align-items: center; justify-content: center; z-index: 1; box-shadow: var(--shadow);
+  }
+  .tl-step h3 { font-size: 13px; font-family: var(--font-body); font-weight: 700; }
+  .tl-step p { margin: 0; font-size: 11.5px; color: var(--text-muted); max-width: 16ch; }
+
+  /* ---- closing ---- */
+  .doc-list { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 22px; }
+  .doc-chip {
+    font-family: var(--font-mono); font-size: 11.5px; background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 999px; padding: 6px 12px; color: var(--text-muted);
+  }
+
+  /* ---- nav chrome ---- */
+  .nav-btn {
+    position: fixed; top: 50%; transform: translateY(-50%);
+    width: 42px; height: 42px; border-radius: 50%;
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: var(--shadow); z-index: 5; opacity: 0.75;
+  }
+  .nav-btn:hover { opacity: 1; border-color: var(--accent-ring); }
+  .nav-btn:focus-visible { outline: 2px solid var(--accent-ring); outline-offset: 2px; }
+  .nav-btn.prev { left: 18px; }
+  .nav-btn.next { right: 18px; }
+  .nav-btn .icon { width: 18px; height: 18px; }
+
+  .dots {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px; z-index: 5;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+    padding: 7px 10px; box-shadow: var(--shadow);
+  }
+  .dots button {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--border); border: none; padding: 0; cursor: pointer;
+  }
+  .dots button.active { background: var(--accent); width: 18px; border-radius: 4px; }
+
+  .counter {
+    position: fixed; bottom: 24px; right: 24px;
+    font-family: var(--font-mono); font-size: 11.5px; color: var(--text-muted); font-variant-numeric: tabular-nums;
+    z-index: 5;
+  }
+</style>
+
+<svg style="display:none">
+  <defs>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5 21 19.5H3z"/><path d="M12 9.5v4.2M12 17h.01"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.2 14.2c2.4.3 4.3 2.1 4.3 4.8"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H12v16H5.5c-.8 0-1.5-.7-1.5-1.5z"/><path d="M20 5.5c0-.8-.7-1.5-1.5-1.5H12v16h6.5c.8 0 1.5-.7 1.5-1.5z"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5.5h16v10H9l-4 3.5v-3.5H4z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.5 19 6v6c0 4.5-3 7.5-7 8.5-4-1-7-4-7-8.5V6z"/><path d="M9.2 12l1.9 1.9 3.7-3.9"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 20V4"/><path d="M6 5h11l-2.5 3.5L17 12H6"/></symbol>
+    <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M9.5 10a2.5 2 0 0 1 2.5-1.6c1.5 0 2.5.8 2.5 1.8s-1 1.4-2.5 1.8-2.5.8-2.5 1.8 1 1.8 2.5 1.8a2.6 2 0 0 0 2.5-1.6"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3.5v2.4M12 18.1v2.4M20.5 12h-2.4M5.9 12H3.5M18 6l-1.7 1.7M7.7 16.3 6 18M18 18l-1.7-1.7M7.7 7.7 6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.6 2.6L16.5 9"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3c0-1.6 1.3-2.6 2.8-2.6s2.7.9 2.7 2.3c0 1.9-2.7 2-2.7 4.1M12 17h.01"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="6" y="4.5" width="12" height="16" rx="1.4"/><rect x="9" y="3" width="6" height="3" rx="1"/><path d="M9 11h6M9 14.5h6M9 18h4"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="1.6"/><path d="M3.5 9.5h17M8 3v3.5M16 3v3.5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M13.5 6.5 19 12l-5.5 5.5"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+    <symbol id="i-chevron-l" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  </defs>
+</svg>
+
+<div class="deck" id="deck">
+
+  <!-- 1: TITLE -->
+  <section class="slide active">
+    <div class="mark">A</div>
+    <div class="eyebrow"><svg class="icon"><use href="#i-book"/></svg> Executive brief</div>
+    <h1 class="headline">Aurelia Onboarding Assistant</h1>
+    <p class="sub">Feasibility decision and approved scope for reducing new-hire wait times — without new headcount or new risk exposure.</p>
+    <div class="meta-line">
+      <span>Prepared for: Leadership review</span>
+      <span>·</span>
+      <span>Status: Conditional go</span>
+    </div>
+  </section>
+
+  <!-- 2: PROBLEM -->
+  <section class="slide">
+    <div class="eyebrow"><svg class="icon"><use href="#i-alert"/></svg> The problem</div>
+    <h1 class="headline">New hires wait on questions we already know the answers to</h1>
+    <div class="cards cols-3">
+      <div class="card warn">
+        <div class="icon-wrap"><svg class="icon" style="width:22px;height:22px"><use href="#i-clock"/></svg></div>
+        <h3>Slow answers</h3>
+        <p class="stat">1–3 day wait*</p>
+      </div>
+      <div class="card warn">
+        <div class="icon-wrap"><svg class="icon" style="width:22px;height:22px"><use href="#i-alert"/></svg></div>
+        <h3>Inconsistent info</h3>
+        <p class="stat">Missed deadlines*</p>
+      </div>
+      <div class="card warn">
+        <div class="icon-wrap"><svg class="icon" style="width:22px;height:22px"><use href="#i-users"/></svg></div>
+        <h3>Repetitive load</h3>
+        <p class="stat">~15–20 Q / cohort</p>
+      </div>
+    </div>
+    <p class="footnote">*Estimated from informal reports — not yet measured. See assumptions-and-evidence.md.</p>
+  </section>
+
+  <!-- 3: OPTIONS -->
+  <section class="slide">
+    <div class="eyebrow"><svg class="icon"><use href="#i-gear"/></svg> Three options compared</div>
+    <h1 class="headline">We compared doing nothing, doing less, and doing more</h1>
+    <div class="cards cols-3">
+      <div class="card opt-card"><span class="opt-tag">Option A</span>
+        <div class="icon-wrap"><svg class="icon" style="width:22px;height:22px"><use href="#i-pause"/></svg></div>
+        <h3>Business as usual</h3>
+        <p>Handbook + buddy + inbox</p>
+      </div>
+      <div class="card opt-card good"><span class="opt-tag selected">Option B</span>
+        <div class="icon-wrap"><svg class="icon" style="width:22px;height:22px"><use href="#i-book"/></svg></div>
+        <h3>Knowledge base</h3>
+        <p>Owned, searchable, low risk</p>
+      </div>
+      <div class="card opt-card" style="position:relative"><span class="opt-tag gated">Option C</span>
+        <div class="icon-wrap"><svg class="icon" style="width:22px;height:22px"><use href="#i-chat"/></svg></div>
+        <h3>AI assistant</h3>
+        <p>Higher upside, higher exposure</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4: FEASIBILITY SNAPSHOT -->
+  <section class="slide">
+    <div class="eyebrow"><svg class="icon"><use href="#i-gear"/></svg> Feasibility snapshot</div>
+    <h1 class="headline" style="font-size:clamp(24px,3.6vw,38px)">Option C looks promising and least proven</h1>
+    <div class="fgrid">
+      <div class="fhead"></div>
+      <div class="fhead">A</div>
+      <div class="fhead">B</div>
+      <div class="fhead">C</div>
+
+      <div class="dimlabel"><svg class="icon"><use href="#i-users"/></svg> Value</div>
+      <div class="dot-cell"><span class="rag r"></span></div>
+      <div class="dot-cell"><span class="rag a"></span></div>
+      <div class="dot-cell"><span class="rag a"></span></div>
+
+      <div class="dimlabel"><svg class="icon"><use href="#i-coin"/></svg> Economic</div>
+      <div class="dot-cell"><span class="rag r"></span></div>
+      <div class="dot-cell"><span class="rag a"></span></div>
+      <div class="dot-cell"><span class="rag r"></span></div>
+
+      <div class="dimlabel"><svg class="icon"><use href="#i-gear"/></svg> Technical</div>
+      <div class="dot-cell"><span class="rag g"></span></div>
+      <div class="dot-cell"><span class="rag a"></span></div>
+      <div class="dot-cell"><span class="rag a"></span></div>
+
+      <div class="dimlabel"><svg class="icon"><use href="#i-shield"/></svg> Legal &amp; safety</div>
+      <div class="dot-cell"><span class="rag a"></span></div>
+      <div class="dot-cell"><span class="rag a"></span></div>
+      <div class="dot-cell"><span class="rag r"></span></div>
+
+      <div class="dimlabel"><svg class="icon"><use href="#i-flag"/></svg> Operational</div>
+      <div class="dot-cell"><span class="rag a"></span></div>
+      <div class="dot-cell"><span class="rag a"></span></div>
+      <div class="dot-cell"><span class="rag r"></span></div>
+    </div>
+    <div class="legend">
+      <span><span class="rag g"></span>Confident</span>
+      <span><span class="rag a"></span>Uncertain</span>
+      <span><span class="rag r"></span>Weak / gated</span>
+    </div>
+  </section>
+
+  <!-- 5: HARD GATES -->
+  <section class="slide">
+    <div class="eyebrow"><svg class="icon"><use href="#i-shield"/></svg> Non-negotiable</div>
+    <h1 class="headline">Three things can stop Option C outright</h1>
+    <div class="gate-row">
+      <div class="gate-chip"><svg class="icon"><use href="#i-users"/></svg> Works-council clearance</div>
+      <svg class="icon arrow-between"><use href="#i-arrow"/></svg>
+      <div class="gate-chip"><svg class="icon"><use href="#i-shield"/></svg> Escalation safety test</div>
+      <svg class="icon arrow-between"><use href="#i-arrow"/></svg>
+      <div class="gate-chip"><svg class="icon"><use href="#i-alert"/></svg> No sensitive-data leak</div>
+    </div>
+    <p class="footnote">Any one failing is a no-go for Option C — regardless of how everything else scores.</p>
+  </section>
+
+  <!-- 6: DECISION -->
+  <section class="slide">
+    <div class="eyebrow"><svg class="icon"><use href="#i-check"/></svg> The decision</div>
+    <h1 class="headline">Conditional go — staged, not all at once</h1>
+    <div class="flow">
+      <div class="flow-node now">
+        <div class="icon-wrap"><svg class="icon" style="width:20px;height:20px"><use href="#i-check"/></svg></div>
+        <h3>Build Option B</h3>
+        <p>Approved now</p>
+      </div>
+      <svg class="icon chevron"><use href="#i-chevron"/></svg>
+      <div class="flow-node gate">
+        <div class="icon-wrap"><svg class="icon" style="width:20px;height:20px"><use href="#i-shield"/></svg></div>
+        <h3>Validate Option C</h3>
+        <p>Bounded, gated pilot</p>
+      </div>
+      <svg class="icon chevron"><use href="#i-chevron"/></svg>
+      <div class="flow-node future">
+        <div class="icon-wrap"><svg class="icon" style="width:20px;height:20px"><use href="#i-help"/></svg></div>
+        <h3>Build decision</h3>
+        <p>Separate, future call</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7: SCOPE NOW -->
+  <section class="slide">
+    <div class="eyebrow"><svg class="icon"><use href="#i-clipboard"/></svg> Approved scope</div>
+    <h1 class="headline" style="font-size:clamp(24px,3.6vw,38px)">What's actually being built right now</h1>
+    <div class="scope-cols">
+      <div class="scope-col">
+        <h3>Knowledge base — production</h3>
+        <ul class="scope-list">
+          <li><svg class="icon"><use href="#i-clipboard"/></svg> Content audit</li>
+          <li><svg class="icon"><use href="#i-book"/></svg> Platform &amp; integration</li>
+          <li><svg class="icon"><use href="#i-users"/></svg> Content ownership</li>
+          <li><svg class="icon"><use href="#i-flag"/></svg> Launch &amp; adoption report</li>
+        </ul>
+      </div>
+      <div class="scope-col gated">
+        <h3>AI validation — bounded pilot</h3>
+        <ul class="scope-list">
+          <li><svg class="icon"><use href="#i-shield"/></svg> Legal &amp; works-council clearance</li>
+          <li><svg class="icon"><use href="#i-chat"/></svg> Prototype + evaluation</li>
+          <li><svg class="icon"><use href="#i-alert"/></svg> Escalation safety test</li>
+          <li><svg class="icon"><use href="#i-help"/></svg> Go / no-go recommendation</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8: 9 CONDITIONS -->
+  <section class="slide">
+    <div class="eyebrow"><svg class="icon"><use href="#i-shield"/></svg> Watch list</div>
+    <h1 class="headline" style="font-size:clamp(24px,3.6vw,38px)">Nine conditions gate a future Option C build</h1>
+    <div class="cond-grid">
+      <div class="cond hard"><span class="num">1</span><span class="label">Works-council clearance</span></div>
+      <div class="cond hard"><span class="num">2</span><span class="label">Escalation safety test</span></div>
+      <div class="cond"><span class="num">3</span><span class="label">Quality threshold met</span></div>
+      <div class="cond"><span class="num">4</span><span class="label">Owner named</span></div>
+      <div class="cond"><span class="num">5</span><span class="label">Question volume confirmed</span></div>
+      <div class="cond"><span class="num">6</span><span class="label">Lawful basis documented</span></div>
+      <div class="cond"><span class="num">7</span><span class="label">Correction path defined</span></div>
+      <div class="cond"><span class="num">8</span><span class="label">Effort fits capacity</span></div>
+      <div class="cond hard"><span class="num">9</span><span class="label">Sensitive data excluded</span></div>
+    </div>
+    <p class="footnote">Highlighted = hard gate. The rest are strong conditions, not automatic blockers.</p>
+  </section>
+
+  <!-- 9: TIMELINE -->
+  <section class="slide">
+    <div class="eyebrow"><svg class="icon"><use href="#i-calendar"/></svg> Next steps</div>
+    <h1 class="headline">Four steps from here</h1>
+    <div class="timeline">
+      <div class="tl-step"><div class="tl-dot"><svg class="icon"><use href="#i-check"/></svg></div><h3>Approve</h3><p>Sign off this decision</p></div>
+      <div class="tl-step"><div class="tl-dot"><svg class="icon"><use href="#i-book"/></svg></div><h3>Launch KB</h3><p>Ship the knowledge base</p></div>
+      <div class="tl-step"><div class="tl-dot"><svg class="icon"><use href="#i-shield"/></svg></div><h3>Validate</h3><p>Run the gated pilot</p></div>
+      <div class="tl-step"><div class="tl-dot"><svg class="icon"><use href="#i-help"/></svg></div><h3>Reconvene</h3><p>Separate go/no-go call</p></div>
+    </div>
+  </section>
+
+  <!-- 10: CLOSING -->
+  <section class="slide">
+    <div class="mark">A</div>
+    <h1 class="headline">Questions</h1>
+    <p class="sub">Full evidence, scoring, and scope live in the project repository.</p>
+    <div class="doc-list">
+      <span class="doc-chip">decision-memo.md</span>
+      <span class="doc-chip">feasibility-matrix.md</span>
+      <span class="doc-chip">wbs.md</span>
+      <span class="doc-chip">wbs-dictionary.md</span>
+    </div>
+  </section>
+
+</div>
+
+<button class="nav-btn prev" id="prevBtn" aria-label="Previous slide" type="button"><svg class="icon"><use href="#i-chevron-l"/></svg></button>
+<button class="nav-btn next" id="nextBtn" aria-label="Next slide" type="button"><svg class="icon"><use href="#i-chevron"/></svg></button>
+<div class="dots" id="dots"></div>
+<div class="counter" id="counter"></div>
+
+<script>
+  (function () {
+    "use strict";
+    var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+    var dotsWrap = document.getElementById("dots");
+    var counter = document.getElementById("counter");
+    var idx = 0;
+
+    slides.forEach(function (_, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("aria-label", "Go to slide " + (i + 1));
+      b.addEventListener("click", function () { goTo(i); });
+      dotsWrap.appendChild(b);
+    });
+    var dotEls = Array.prototype.slice.call(dotsWrap.children);
+
+    function render() {
+      slides.forEach(function (s, i) { s.classList.toggle("active", i === idx); });
+      dotEls.forEach(function (d, i) { d.classList.toggle("active", i === idx); });
+      counter.textContent = (idx + 1) + " / " + slides.length;
+    }
+
+    function goTo(i) {
+      idx = Math.max(0, Math.min(slides.length - 1, i));
+      render();
+    }
+    function next() { goTo(idx + 1); }
+    function prev() { goTo(idx - 1); }
+
+    document.getElementById("nextBtn").addEventListener("click", next);
+    document.getElementById("prevBtn").addEventListener("click", prev);
+
+    window.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); next(); }
+      else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); prev(); }
+      else if (e.key === "Home") { e.preventDefault(); goTo(0); }
+      else if (e.key === "End") { e.preventDefault(); goTo(slides.length - 1); }
+    });
+
+    var touchStartX = null;
+    window.addEventListener("touchstart", function (e) { touchStartX = e.touches[0].clientX; }, { passive: true });
+    window.addEventListener("touchend", function (e) {
+      if (touchStartX === null) return;
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+      touchStartX = null;
+    }, { passive: true });
+
+    render();
+  })();
+</script>
+
+<style>.pf-back{position:fixed;left:12px;bottom:12px;z-index:2147483000;font:600 13px/1 system-ui,Segoe UI,Arial,sans-serif;background:#1f4e79;color:#fff;text-decoration:none;padding:9px 13px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.3);opacity:.92}.pf-back:hover{opacity:1}@media print{.pf-back{display:none}}</style><a class="pf-back" href="../projects/aurelia-feasibility.html">&larr; Back to case study</a></body></html>

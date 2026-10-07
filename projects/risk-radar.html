@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Project Risk Radar · Karthikeyan Arumugam</title>
+<meta name="description" content="Case study: an early-warning tool for project managers that combines rule-based checks and LLM extraction, with evaluation, evidence trails and a human decision.">
+<meta name="theme-color" content="#1f4e79">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AI Project Risk Radar · Karthikeyan Arumugam">
+<meta property="og:description" content="Case study: an early-warning tool for project managers that combines rule-based checks and LLM extraction, with evaluation, evidence trails and a human decision.">
+<meta property="og:image" content="https://karthikarumukam-code.github.io/assets/img/og.jpg">
+<meta property="og:url" content="https://karthikarumukam-code.github.io/projects/risk-radar.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="../index.html">Karthikeyan Arumugam</a>
+    <nav class="nav" aria-label="Main">
+      <a class="hide-xs" href="../index.html#projects">Projects</a>
+      <a class="hide-sm" href="../index.html#how-i-work">How I work</a>
+      <a class="hide-sm" href="../index.html#coursework">Coursework</a>
+      <a class="hide-sm" href="../index.html#background">Background</a>
+      <a href="../index.html#contact">Contact</a>
+      <button class="theme-btn" id="theme-btn" type="button" aria-label="Switch light or dark theme" title="Switch light or dark theme">&#9788;</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap narrow">
+    <p class="crumb"><a href="../index.html#projects">&larr; All projects</a></p>
+    <div class="p-hero">
+      <div class="eyebrow">Capstone · team of 3</div>
+      <h1>AI Project Risk Radar</h1>
+      <p class="lead">An early-warning tool that helps a project manager see the latest and combined risks across projects, with the evidence behind each flag, and leaves the decision with the PM.</p>
+      <ul class="chips"><li>Python</li><li>FastAPI</li><li>React + TypeScript</li><li>Streamlit</li><li>LLM extraction</li><li>GitHub Actions</li></ul>
+    </div>
+  </div>
+  <div class="wrap"><dl class="facts"><div class='fact'><dt>Role</dt><dd>Team member<small>Project-manager role rotated weekly</small></dd></div><div class='fact'><dt>Team</dt><dd>3 people<small>neuefische AI PM certificate</small></dd></div><div class='fact'><dt>Period</dt><dd>2026<small>Hand-in 12 October</small></dd></div><div class='fact'><dt>Status</dt><dd>Working web app<small>Synthetic data only</small></dd></div></dl></div>
+  <div class="wrap narrow article">
+
+<!-- EDIT: add 2 to 3 sentences about your own contribution (what you built, which PM weeks you led) -->
+<section>
+  <h2>The problem</h2>
+  <p>A project manager's risk signals live in separate documents: the status report, the RAID log, the dependency register, the plan and the meeting minutes. A compounding risk that spans several of them is often noticed too late to do anything but escalate or absorb an overrun.</p>
+  <p>The Risk Radar cross-checks those documents and gives the PM an at-a-glance view of the latest and combined risks, so mitigation can be planned with the team and the steering committee can be warned in time.</p>
+</section>
+
+<section>
+  <h2>What it does</h2>
+  <ul>
+    <li>Reads a project's status reports, RAID log, dependency register, plan and meeting minutes.</li>
+    <li>Flags compounding risks when signals appear across several categories, plus critical or high risks, overdue plan tasks and risks that are new since the last report.</li>
+    <li>Scores each risk with a transparent formula (Probability &times; Impact &times; Urgency) and links every flag back to its exact source sentence or table row.</li>
+    <li>Shows the PM's own RAG status next to the tool's assessment and surfaces any disagreement instead of hiding it.</li>
+    <li>Plots a trend across the historical weekly reports and a portfolio view of all projects side by side.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>How it is put together</h2>
+  <p>Structured data such as a RAID row or an overdue plan task is parsed once, deterministically, and never touched by an LLM. Only narrative text (status reports, minutes) is re-extracted by a model, and only when one is configured. If the model is unavailable, the tool falls back to a rule-based extractor and shows the reason.</p>
+  <ol class="flow" style="--n:5">
+    <li class="node"><b>Project documents</b><span>Status reports, RAID log, dependency register, plan, minutes</span></li>
+    <li class="node"><b>Extraction</b><span>Structured rows: deterministic parsers, always on.</span><span class="sub">Narrative text: rule-based baseline, or an LLM (Anthropic, OpenRouter or Ollama) when configured.</span></li>
+    <li class="node"><b>Risk engine</b><span>Correlates signals, raises a compound-risk flag across categories, marks new risks</span></li>
+    <li class="node"><b>Scoring and recommendation</b><span>Probability &times; Impact &times; Urgency, a recommendation, and the PM's RAG shown beside the AI's read</span></li>
+    <li class="node human"><b>PM decides</b><span>Every flag carries its evidence. Nothing is sent, written or escalated automatically.</span></li>
+  </ol>
+  <p style="color:var(--muted);font-size:.95rem">The same code path runs inside the app and inside the offline evaluation harness, so the test results describe the real pipeline, not a mock of it.</p>
+</section>
+
+<section>
+  <h2>How the work progressed</h2>
+  <ol class="stages">
+    <li><b>Rule-based baseline</b>A deterministic extractor first, so there was something fair to beat.</li>
+    <li><b>LLM extraction</b>Added as an alternative to the baseline, with Anthropic, OpenRouter and Ollama as providers.</li>
+    <li><b>Evaluation harness</b>A hand-labelled gold set and an offline harness to compare both approaches on the same documents.</li>
+    <li><b>MVP</b>A score confrontation between LLM and rules, schedule-hygiene, risk-register-hygiene and reporting-cadence metrics, rolled up into a confidence rating.</li>
+    <li><b>Web application</b>A React and FastAPI web app on top of the same engine. The Streamlit prototype stayed as a fallback.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>How it is evaluated</h2>
+  <p>Evaluation is split into three layers, so a good headline number cannot hide a weak part:</p>
+  <ul>
+    <li><strong>Extraction:</strong> were the right signals pulled out of the documents?</li>
+    <li><strong>Detection:</strong> were the right risks flagged, compared with the baselines?</li>
+    <li><strong>Calibration:</strong> does the stated confidence match how often the tool is right?</li>
+  </ul>
+  <p>At the prototype stage (September 2026) the suite had 65 automated tests and 11 of 11 expected risks found on the hand-labelled gold set. That gold set is small and synthetic, so read it as a regression check, not as proof of real-world accuracy.</p>
+</section>
+
+<section>
+  <h2>One design rule</h2>
+  <div class="callout">
+    <p><strong>No automated action. The PM decides.</strong> The tool synthesises evidence into a recommendation and stops there. It does not write to Jira, send an email or escalate. The guardrail was written into the project roadmap and re-checked at every pull-request review.</p>
+  </div>
+</section>
+
+<section>
+  <h2>How the team ran it</h2>
+  <ul>
+    <li>A four-phase Kanban board, with the project-manager role rotating every week.</li>
+    <li>Risks tracked as labelled issues, and a mandatory review on every pull request.</li>
+    <li>Six GitHub Actions workflows, including secret scanning, and deterministic tests that mock the LLM so CI never depends on an API.</li>
+    <li>Daily evaluation runs until the hand-in on 12 October 2026.</li>
+    <li>A Responsible-AI review with the outcome &ldquo;proceed with conditions&rdquo;.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Limits</h2>
+  <div class="callout warn">
+    <ul>
+      <li>All data is synthetic. Real project documents name real people, and the privacy and security design for that was out of scope.</li>
+      <li>The tool has not yet been validated with practising project managers. That is the most important next step.</li>
+      <li>Thresholds and heuristics were tuned on a small gold set. They are working defaults, not principled constants.</li>
+      <li>No integration with Jira, Azure DevOps or ServiceNow, and no live monitoring: it only checks when a PM runs it.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>Look closer</h2>
+  <p>Working pages from the project, saved as they were:</p>
+  <ul class="dives"><li><a href="../deep-dives/risk-radar-journey.html"><b>The PM journey</b><span>Nine steps from opening a project to the PM's decision, traced from the running app.</span></a></li><li><a href="../deep-dives/risk-radar-system-map.html"><b>System map</b><span>How a document becomes a scored, evidence-linked risk, module by module.</span></a></li><li><a href="../deep-dives/risk-radar-pm-workflow.html"><b>PM workflow</b><span>Where the tool sits inside a PM's reporting cycle, and what it does not touch.</span></a></li><li><a href="../deep-dives/risk-radar-mvp.html"><b>MVP scope</b><span>What the MVP includes and, just as clearly, what it leaves out.</span></a></li></ul>
+  <p style="color:var(--muted);font-size:.95rem">The code lives in a private team repository. I can walk through it in an interview.</p>
+</section>
+
+    <div class="pager"><a href="../index.html#projects">&larr; All projects</a><a href="test-bench.html">Predicting Test-Bench Time &rarr;</a></div>
+  </div>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <p>&copy; 2026 Karthikeyan Arumugam. Essen, Germany.</p>
+    <p>All projects shown are training or portfolio work. Aurelia Software GmbH is a fictional company from a course case. The site uses no cookies, trackers or external fonts.</p>
+  </div>
+</footer>
+<script>
+(function(){
+  var b=document.getElementById('theme-btn'); if(!b) return;
+  function cur(){var t=document.documentElement.getAttribute('data-theme'); if(t) return t; return (window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}
+  b.addEventListener('click',function(){var n=cur()==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',n); try{localStorage.setItem('theme',n);}catch(e){}});
+})();
+</script>
+</body>
+</html>

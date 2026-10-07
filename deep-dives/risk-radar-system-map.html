@@ -1,0 +1,234 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Risk Radar System Map</title>
+<style>
+  /* Same "mission control" identity as the app itself (prototype/src/theme.py) —
+     exact palette values, not an approximation, so this reads as the product's
+     own diagram rather than a generic one. Deliberately single-theme. */
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel-2:#1c2430; --border:#2a3441; --border-soft:#212b36;
+    --text:#e6edf3; --text-muted:#8b949e; --text-faint:#5c6773;
+    --accent:#39d3bb; --accent-soft:#12292a; --accent-ink:#7fe4d2;
+    --good:#3fb950; --good-soft:#0f2a17;
+    --caution:#d29922; --caution-soft:#2b2111;
+    --sans:'IBM Plex Sans', system-ui, sans-serif; --mono:'IBM Plex Mono', ui-monospace, monospace;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -10px rgba(0,0,0,.55);
+  }
+  *{ box-sizing:border-box; }
+  body{ background:var(--bg); color:var(--text); font-family:var(--sans); }
+  .page{ max-width:1120px; margin:0 auto; padding:48px 24px 72px; }
+
+  .eyebrow{
+    font-family:var(--mono); font-size:11.5px; font-weight:600; letter-spacing:.11em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:8px;
+  }
+  h1{ font-size:30px; font-weight:700; letter-spacing:-.01em; margin:0 0 8px; }
+  .framing{ color:var(--text-muted); font-size:14.5px; max-width:74ch; margin:0 0 32px; line-height:1.55; }
+
+  .legend{ display:flex; gap:18px; flex-wrap:wrap; margin-bottom:18px; }
+  .legend-item{ display:flex; align-items:center; gap:7px; font-size:11.5px; color:var(--text-muted); }
+  .legend-swatch{ width:12px; height:12px; border-radius:3px; flex:none; }
+
+  figure{ margin:0; }
+  .diagram-frame{
+    background:var(--panel); border:1px solid var(--border); border-radius:12px;
+    padding:18px 16px 12px; box-shadow:var(--shadow); overflow-x:auto;
+  }
+  svg text{ font-family:var(--sans); }
+  svg .mono{ font-family:var(--mono); }
+  figcaption{ font-size:13px; color:var(--text-muted); margin-top:16px; max-width:78ch; line-height:1.6; }
+  figcaption b{ color:var(--text); font-weight:600; }
+  figcaption p{ margin:0 0 10px; }
+  figcaption p:last-child{ margin-bottom:0; }
+
+  footer{
+    margin-top:40px; padding-top:16px; border-top:1px solid var(--border-soft);
+    font-family:var(--mono); font-size:10.8px; color:var(--text-faint);
+    display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+</style>
+
+<div class="page">
+  <div class="eyebrow">AI Project Risk Radar &middot; As Built</div>
+  <h1>System Map</h1>
+  <p class="framing">
+    How a document on disk becomes a scored, evidence-linked risk on screen &mdash;
+    every box below is a real module in <code>prototype/src/</code>, and every
+    arrow is a call that exists in the code today, not a proposed architecture.
+  </p>
+
+  <div class="legend">
+    <div class="legend-item"><span class="legend-swatch" style="background:var(--good)"></span>Deterministic &middot; always on</div>
+    <div class="legend-item"><span class="legend-swatch" style="background:var(--caution)"></span>Optional &middot; LLM-dependent</div>
+    <div class="legend-item"><span class="legend-swatch" style="background:var(--accent)"></span>Orchestrator / result</div>
+    <div class="legend-item"><span class="legend-swatch" style="background:var(--text-faint)"></span>Offline &middot; outside the live app</div>
+  </div>
+
+  <figure>
+    <div class="diagram-frame">
+      <svg viewBox="0 0 1040 820" role="img" aria-label="Data flow from a project's documents to a scored risk on screen. A disk folder or a manual upload is ingested, then handed to the pipeline orchestrator, which fans out to three extractors: structured CSV parsers and a rule-based narrative extractor, both always on and deterministic, plus an optional LLM extractor that replaces the rule-based narrative output only, falling back automatically if unconfigured or unreachable. Structured signals pass straight through untouched by any LLM. Results are correlated into risks, scored, given recommendations, and shown on two Streamlit pages. A separate offline evaluate.py script calls the same orchestrator directly against a hand-labelled gold set, outside the live app.">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+          <marker id="arrowAccent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+          </marker>
+          <marker id="arrowCaution" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--caution)"/>
+          </marker>
+          <marker id="arrowGood" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--good)"/>
+          </marker>
+          <marker id="arrowFaint" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--text-faint)"/>
+          </marker>
+        </defs>
+
+        <!-- ===== plain connecting arrows (drawn first, under boxes) ===== -->
+        <g stroke="var(--text-faint)" stroke-width="1.3" fill="none" color="var(--text-faint)">
+          <line x1="155" y1="86"  x2="155" y2="121" marker-end="url(#arrowFaint)"/>
+          <line x1="415" y1="86"  x2="415" y2="121" marker-end="url(#arrowFaint)"/>
+          <line x1="155" y1="180" x2="155" y2="207" marker-end="url(#arrowFaint)"/>
+          <line x1="415" y1="180" x2="415" y2="207" marker-end="url(#arrowFaint)"/>
+          <path d="M285,596 L285,633" marker-end="url(#arrowFaint)"/>
+          <path d="M230,686 L160,723" marker-end="url(#arrowFaint)"/>
+          <path d="M340,686 L410,723" marker-end="url(#arrowFaint)"/>
+        </g>
+
+        <!-- orchestrator fan-out -->
+        <g stroke="var(--accent)" stroke-width="1.3" fill="none" color="var(--accent)">
+          <path d="M155,260 L155,301" marker-end="url(#arrowAccent)"/>
+          <path d="M300,260 L420,301" marker-end="url(#arrowAccent)"/>
+          <path d="M460,260 L678,301" marker-end="url(#arrowAccent)"/>
+        </g>
+
+        <!-- structured bypass: straight through, untouched -->
+        <path d="M155,366 L107,417" stroke="var(--good)" stroke-width="1.6" fill="none" marker-end="url(#arrowGood)" color="var(--good)"/>
+        <text x="60" y="398" font-size="9.5" fill="var(--good)" text-anchor="start">passes through untouched</text>
+
+        <!-- rule-based -> build_risks -->
+        <path d="M415,366 L262,417" stroke="var(--good)" stroke-width="1.6" fill="none" marker-end="url(#arrowGood)" color="var(--good)"/>
+
+        <!-- LLM (optional, dashed) -> build_risks, merges near rule-based landing -->
+        <path d="M610,366 L278,417" stroke="var(--caution)" stroke-width="1.5" stroke-dasharray="5 4" fill="none" marker-end="url(#arrowCaution)" color="var(--caution)"/>
+        <text x="330" y="400" font-size="9.5" fill="var(--caution)" text-anchor="start">replaces narrative signals when live</text>
+
+        <!-- fallback curve: LLM -> rule-based -->
+        <path d="M600,301 C 560,278 480,278 445,300" stroke="var(--caution)" stroke-width="1.3" stroke-dasharray="3 3" fill="none" marker-end="url(#arrowCaution)" color="var(--caution)"/>
+        <text x="522" y="272" font-size="9" fill="var(--caution)" text-anchor="middle">falls back if unconfigured/fails</text>
+        <text x="522" y="283" font-size="9" fill="var(--caution)" text-anchor="middle">reason surfaced, not hidden</text>
+
+        <!-- build_risks -> scoring_engine -->
+        <path d="M270,451 L297,451" stroke="var(--text-muted)" stroke-width="1.3" fill="none" marker-end="url(#arrow)" color="var(--text-muted)"/>
+        <text x="284" y="443" font-size="9" fill="var(--text-muted)" text-anchor="middle">scores</text>
+        <text x="284" y="466" font-size="9" fill="var(--text-muted)" text-anchor="middle">each risk</text>
+
+        <!-- build_risks -> recommend -->
+        <path d="M155,482 L200,543" stroke="var(--text-faint)" stroke-width="1.3" fill="none" marker-end="url(#arrowFaint)" color="var(--text-faint)"/>
+
+        <!-- orchestrator -> evaluate.py (offline branch) -->
+        <path d="M530,235 C 700,235 760,300 828,395" stroke="var(--text-faint)" stroke-width="1.3" stroke-dasharray="4 4" fill="none" marker-end="url(#arrowFaint)" color="var(--text-faint)"/>
+        <text x="700" y="262" font-size="9.5" fill="var(--text-faint)" text-anchor="middle">same orchestrator, called directly</text>
+        <text x="700" y="274" font-size="9.5" fill="var(--text-faint)" text-anchor="middle">offline &mdash; no UI in the loop</text>
+
+        <!-- ===== boxes ===== -->
+        <!-- helper visual language: title 12px/600, subtitle 9.5px mono muted -->
+
+        <!-- N1 -->
+        <rect x="40" y="30" width="230" height="56" rx="8" fill="var(--panel-2)" stroke="var(--border)" stroke-width="1.3"/>
+        <text x="155" y="54" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">Project folder (disk)</text>
+        <text x="155" y="70" text-anchor="middle" class="mono" font-size="9.5" fill="var(--text-muted)">data/&lt;project&gt;/*.md, *.csv</text>
+
+        <!-- N2 -->
+        <rect x="300" y="30" width="230" height="56" rx="8" fill="var(--panel-2)" stroke="var(--border)" stroke-width="1.3"/>
+        <text x="415" y="54" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">Manual upload</text>
+        <text x="415" y="70" text-anchor="middle" class="mono" font-size="9.5" fill="var(--text-muted)">narrative + CSV files</text>
+
+        <!-- N3 -->
+        <rect x="40" y="124" width="230" height="56" rx="8" fill="var(--panel-2)" stroke="var(--border)" stroke-width="1.3"/>
+        <text x="155" y="148" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">load_project()</text>
+        <text x="155" y="164" text-anchor="middle" class="mono" font-size="9.5" fill="var(--text-muted)">document_processor.py</text>
+
+        <!-- N4 -->
+        <rect x="300" y="124" width="230" height="56" rx="8" fill="var(--panel-2)" stroke="var(--border)" stroke-width="1.3"/>
+        <text x="415" y="148" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">extract_text()</text>
+        <text x="415" y="164" text-anchor="middle" class="mono" font-size="9.5" fill="var(--text-muted)">document_converter.py</text>
+
+        <!-- N5 orchestrator -->
+        <rect x="40" y="210" width="490" height="50" rx="9" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6"/>
+        <text x="285" y="232" text-anchor="middle" font-size="13" font-weight="700" fill="var(--accent-ink)">run_snapshot()  /  run_trend()</text>
+        <text x="285" y="248" text-anchor="middle" class="mono" font-size="9.5" fill="var(--accent-ink)">pipeline.py &mdash; orchestrates one project's full pass</text>
+
+        <!-- N6 structured -->
+        <rect x="40" y="304" width="230" height="62" rx="8" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.5"/>
+        <text x="155" y="328" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">Structured parsers</text>
+        <text x="155" y="344" text-anchor="middle" class="mono" font-size="9.5" fill="var(--text-muted)">RAID &middot; dependency &middot; plan</text>
+        <text x="155" y="357" text-anchor="middle" font-size="9" fill="var(--good)">always on</text>
+
+        <!-- N7 rule-based -->
+        <rect x="300" y="304" width="230" height="62" rx="8" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.5"/>
+        <text x="415" y="328" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">Rule-based extractor</text>
+        <text x="415" y="344" text-anchor="middle" class="mono" font-size="9.5" fill="var(--text-muted)">narrative text</text>
+        <text x="415" y="357" text-anchor="middle" font-size="9" fill="var(--good)">always on, offline</text>
+
+        <!-- N8 llm -->
+        <rect x="560" y="304" width="230" height="62" rx="8" fill="var(--caution-soft)" stroke="var(--caution)" stroke-width="1.5"/>
+        <text x="675" y="325" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">LLM extractor</text>
+        <text x="675" y="340" text-anchor="middle" class="mono" font-size="9.5" fill="var(--text-muted)">Anthropic &middot; OpenRouter &middot; Ollama</text>
+        <text x="675" y="356" text-anchor="middle" font-size="9" fill="var(--caution)">optional &middot; narrative only</text>
+
+        <!-- N9 build_risks -->
+        <rect x="40" y="420" width="230" height="62" rx="8" fill="var(--panel-2)" stroke="var(--border)" stroke-width="1.4"/>
+        <text x="155" y="444" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">build_risks()</text>
+        <text x="155" y="460" text-anchor="middle" class="mono" font-size="9.5" fill="var(--text-muted)">risk_engine.py</text>
+        <text x="155" y="473" text-anchor="middle" font-size="9" fill="var(--text-faint)">correlate &middot; Compound Risk @ &ge;3</text>
+
+        <!-- N10 scoring -->
+        <rect x="300" y="420" width="230" height="62" rx="8" fill="var(--panel-2)" stroke="var(--border)" stroke-width="1.4"/>
+        <text x="415" y="448" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">scoring_engine</text>
+        <text x="415" y="464" text-anchor="middle" class="mono" font-size="9.5" fill="var(--text-muted)">Probability &times; Impact &times; Urgency</text>
+
+        <!-- N11 recommend -->
+        <rect x="40" y="546" width="490" height="50" rx="9" fill="var(--panel-2)" stroke="var(--border)" stroke-width="1.4"/>
+        <text x="285" y="568" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--text)">recommend()  +  overall_health()</text>
+        <text x="285" y="584" text-anchor="middle" class="mono" font-size="9.5" fill="var(--text-muted)">recommendation_engine.py &middot; divergence vs PM's reported RAG</text>
+
+        <!-- N12 result -->
+        <rect x="170" y="636" width="230" height="50" rx="9" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6"/>
+        <text x="285" y="658" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--accent-ink)">SnapshotResult</text>
+        <text x="285" y="674" text-anchor="middle" class="mono" font-size="9.5" fill="var(--accent-ink)">+ TrendPoint[] &middot; Foresight</text>
+
+        <!-- N13 app.py -->
+        <rect x="40" y="726" width="230" height="64" rx="8" fill="var(--panel-2)" stroke="var(--border)" stroke-width="1.3"/>
+        <text x="155" y="750" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">app.py &mdash; dashboard</text>
+        <text x="155" y="766" text-anchor="middle" class="mono" font-size="9.5" fill="var(--text-muted)">trend chart, foresight</text>
+        <text x="155" y="780" text-anchor="middle" font-size="9" fill="var(--text-faint)">styled via theme.py</text>
+
+        <!-- N14 portfolio -->
+        <rect x="300" y="726" width="230" height="64" rx="8" fill="var(--panel-2)" stroke="var(--border)" stroke-width="1.3"/>
+        <text x="415" y="750" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">Portfolio Overview</text>
+        <text x="415" y="766" text-anchor="middle" class="mono" font-size="9.5" fill="var(--text-muted)">pages/1_Portfolio_Overview.py</text>
+        <text x="415" y="780" text-anchor="middle" font-size="9" fill="var(--text-faint)">same pipeline, per project</text>
+
+        <!-- N15 evaluate.py (offline) -->
+        <rect x="830" y="370" width="180" height="92" rx="8" fill="var(--panel)" stroke="var(--text-faint)" stroke-width="1.2" stroke-dasharray="5 4"/>
+        <text x="920" y="396" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">evaluate.py</text>
+        <text x="920" y="412" text-anchor="middle" class="mono" font-size="9" fill="var(--text-muted)">offline recall harness</text>
+        <text x="920" y="427" text-anchor="middle" font-size="9" fill="var(--text-faint)">vs data/gold_set.json</text>
+        <text x="920" y="442" text-anchor="middle" font-size="9" fill="var(--text-faint)">11/11 recall, 65 tests</text>
+      </svg>
+    </div>
+    <figcaption>
+      <p><b>The one thing this diagram exists to show:</b> structured data (a RAID row, a dependency-register row, an overdue plan task) is parsed once, deterministically, and never touched by an LLM &mdash; it runs straight through to <code>build_risks()</code>. Only narrative text (status reports, meeting minutes) is ever re-extracted by a model, and only one narrative extractor runs at a time: rule-based by default, or an LLM in its place when a provider is configured and reachable &mdash; never both, and the LLM path falls back to the deterministic baseline automatically if it isn't, with the reason shown, not swallowed.</p>
+      <p><b>Two outputs, one pipeline:</b> <code>run_snapshot()</code> computes "now" from the latest documents; <code>run_trend()</code> replays the same extraction independently against each historical status report, which is what lets the trend chart and the AI-led-the-PM "foresight" callout exist at all.</p>
+      <p><b>The eval harness isn't a separate implementation:</b> <code>evaluate.py</code> calls <code>load_project()</code> and <code>run_snapshot()</code> directly &mdash; the exact same code path the app runs &mdash; against a hand-labelled gold set, offline. Its 11/11 recall and 65 passing tests describe this real pipeline, not a mock of it.</p>
+    </figcaption>
+  </figure>
+
+  <footer>
+    <span>ai-project-risk-radar/prototype/src/ &middot; verified against pipeline.py, signal_extractor.py, risk_engine.py, document_processor.py, document_converter.py, app.py, evaluate.py</span>
+    <span>System map &middot; reflects the code as of 10 Sep 2026</span>
+  </footer>
+</div>
+
+<style>.pf-back{position:fixed;left:12px;bottom:12px;z-index:2147483000;font:600 13px/1 system-ui,Segoe UI,Arial,sans-serif;background:#1f4e79;color:#fff;text-decoration:none;padding:9px 13px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.3);opacity:.92}.pf-back:hover{opacity:1}@media print{.pf-back{display:none}}</style><a class="pf-back" href="../projects/risk-radar.html">&larr; Back to case study</a></body></html>

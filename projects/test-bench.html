@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Predicting Test-Bench Time · Karthikeyan Arumugam</title>
+<meta name="description" content="Case study: predicting test-bench time for car configurations from 4,209 test runs, with a baseline, a model comparison and honest limits.">
+<meta name="theme-color" content="#1f4e79">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Predicting Test-Bench Time · Karthikeyan Arumugam">
+<meta property="og:description" content="Case study: predicting test-bench time for car configurations from 4,209 test runs, with a baseline, a model comparison and honest limits.">
+<meta property="og:image" content="https://karthikarumukam-code.github.io/assets/img/og.jpg">
+<meta property="og:url" content="https://karthikarumukam-code.github.io/projects/test-bench.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="../index.html">Karthikeyan Arumugam</a>
+    <nav class="nav" aria-label="Main">
+      <a class="hide-xs" href="../index.html#projects">Projects</a>
+      <a class="hide-sm" href="../index.html#how-i-work">How I work</a>
+      <a class="hide-sm" href="../index.html#coursework">Coursework</a>
+      <a class="hide-sm" href="../index.html#background">Background</a>
+      <a href="../index.html#contact">Contact</a>
+      <button class="theme-btn" id="theme-btn" type="button" aria-label="Switch light or dark theme" title="Switch light or dark theme">&#9788;</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap narrow">
+    <p class="crumb"><a href="../index.html#projects">&larr; All projects</a></p>
+    <div class="p-hero">
+      <div class="eyebrow">Data science portfolio project · team of 2</div>
+      <h1>Predicting Test-Bench Time</h1>
+      <p class="lead">A model that estimates how long a car configuration will need on the test bench before the car arrives, built from 4,209 recorded runs of the Mercedes-Benz Greener Manufacturing dataset.</p>
+      <ul class="chips"><li>Python</li><li>scikit-learn</li><li>XGBoost</li><li>Random Forest</li><li>Ridge</li><li>EDA and feature engineering</li></ul>
+    </div>
+  </div>
+  <div class="wrap"><dl class="facts"><div class='fact'><dt>Team</dt><dd>2 people<small>neuefische AI PM certificate</small></dd></div><div class='fact'><dt>Data</dt><dd>4,209 runs<small>Public Kaggle dataset</small></dd></div><div class='fact'><dt>Result</dt><dd>35% lower error<small>vs guessing the average</small></dd></div><div class='fact'><dt>Status</dt><dd>Offline evaluation<small>Not piloted on a line</small></dd></div></dl></div>
+  <div class="wrap narrow article">
+
+<!-- EDIT: add 2 to 3 sentences about your own contribution (which parts of the analysis and modelling you did) -->
+<section>
+  <h2>The problem</h2>
+  <p>The test bench is a shared, limited resource, and every finished configuration has to pass through it before production. Most cars clear it quickly. Some take far longer, and today nobody knows which until the car is already on the bench.</p>
+  <p>The question: can the time on the bench be predicted from the configuration, before the car arrives?</p>
+</section>
+
+<section>
+  <h2>The result</h2>
+  <div class="big">
+    <div><b>4,209</b><span>recorded test runs in the data</span></div>
+    <div><b>35% lower</b><span>typical error than guessing the average (12.5 s down to 8.2 s)</span></div>
+    <div><b>R&sup2; 0.57</b><span>on a frozen held-out test set of 842 cars</span></div>
+  </div>
+  <p>Typical error in seconds, scored on cars the model had never seen:</p>
+  <div class="bars" role="img" aria-label="Typical error in seconds: Random Forest 8.19, XGBoost 8.20, Ridge regression 8.36, guessing the average 12.53">
+    <div class="bar best"><span>Random Forest</span><span class="track"><span class="fill" style="width:65.4%"></span></span><span class="val">8.19 s</span></div>
+    <div class="bar"><span>XGBoost</span><span class="track"><span class="fill" style="width:65.5%"></span></span><span class="val">8.20 s</span></div>
+    <div class="bar"><span>Ridge regression</span><span class="track"><span class="fill" style="width:66.7%"></span></span><span class="val">8.36 s</span></div>
+    <div class="bar base"><span>Guessing the average</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="val">12.53 s</span></div>
+  </div>
+  <p>The same data is a public Kaggle competition. On the competition's private-leaderboard metric the model scored 0.543, against 0.556 for the documented first-place solution. Our first reading of that benchmark was wrong; we caught it, verified the real documented score and corrected the claim before presenting.</p>
+</section>
+
+<section>
+  <h2>What actually drives the prediction</h2>
+  <p>Hiding one configuration choice at a time showed that most choices make no difference at all, and just a couple explain almost everything. Two further findings shaped the recommendation:</p>
+  <ul>
+    <li>One configuration type is rare in the history, so predictions for it carry more uncertainty. It deserves an extra buffer, not blind trust.</li>
+    <li>Some variation cannot be explained by configuration at all: cars with identical setups still differ in actual test time, by up to a minute. That points to process or equipment, not to the model.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Keeping the simpler model</h2>
+  <p>A neural network was tried as a challenger. The pass/fail rule was fixed before training: it had to beat the Random Forest by more than a practical-difference threshold of 0.3 seconds. It did not, and the result held across three random seeds.</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Metric</th><th class="num">Random Forest</th><th class="num">Neural network</th></tr></thead>
+    <tbody>
+      <tr><td>Test RMSE</td><td class="num win">8.186 s</td><td class="num">8.542 s</td></tr>
+      <tr><td>Test R&sup2;</td><td class="num win">0.573</td><td class="num">0.535</td></tr>
+      <tr><td>Training time</td><td class="num win">2.91 s</td><td class="num">31.24 s</td></tr>
+      <tr><td>Single-row inference</td><td class="num win">21.6 ms</td><td class="num">103.4 ms</td></tr>
+      <tr><td>Model file size</td><td class="num">833 KB</td><td class="num win">456 KB</td></tr>
+    </tbody></table></div>
+  <p>The Random Forest won at every training-set size tested, its lead widened on categories the model had not seen, and an entity-embedding fix for rare categories gave no accuracy gain and ten times more seed-to-seed variance. Decision: keep the Random Forest.</p>
+</section>
+
+<section>
+  <h2>From the original idea to what was built</h2>
+  <p>The first idea was a scheduling assistant: score every car as its configuration is finalised and sequence the day's queue by expected duration. What the team actually built was a review tool that flags every past car where the predicted time missed the real outcome by more than 5%, so an engineer can inspect and compare similar cases. A time-lapse demo dashboard replays about 800 cars through the bench for presentations.</p>
+  <p>Next steps recommended to the (hypothetical) stakeholders: pilot on one line alongside current practice, investigate the identical-configuration variance with the process team, and retrain quarterly.</p>
+</section>
+
+<section>
+  <h2>Limits</h2>
+  <div class="callout warn">
+    <ul>
+      <li>A public Kaggle dataset, not live production data, and an offline evaluation. Nothing was piloted on a real line.</li>
+      <li>No business threshold for &ldquo;accurate enough to act on&rdquo; was available, so the recommendation is a pilot, not a rollout.</li>
+      <li>The weakest area is the rare configuration, where the model should not be trusted without a buffer.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>Look closer</h2>
+  <ul class="dives"><li><a href="../deep-dives/test-bench-executive-summary.html"><b>Executive summary</b><span>Nine slides for manufacturing and process engineering.</span></a></li><li><a href="../deep-dives/test-bench-model-comparison.html"><b>Model comparison</b><span>Random Forest against the neural-network challenger, on one page.</span></a></li></ul>
+</section>
+
+    <div class="pager"><a href="risk-radar.html">&larr; AI Project Risk Radar</a><a href="rag-pipeline.html">RAG Pipeline &rarr;</a></div>
+  </div>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <p>&copy; 2026 Karthikeyan Arumugam. Essen, Germany.</p>
+    <p>All projects shown are training or portfolio work. Aurelia Software GmbH is a fictional company from a course case. The site uses no cookies, trackers or external fonts.</p>
+  </div>
+</footer>
+<script>
+(function(){
+  var b=document.getElementById('theme-btn'); if(!b) return;
+  function cur(){var t=document.documentElement.getAttribute('data-theme'); if(t) return t; return (window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}
+  b.addEventListener('click',function(){var n=cur()==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',n); try{localStorage.setItem('theme',n);}catch(e){}});
+})();
+</script>
+</body>
+</html>

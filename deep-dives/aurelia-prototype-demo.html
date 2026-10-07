@@ -1,0 +1,744 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>Aurelia Onboarding Assistant — Prototype Demo</title>
+<style>
+  :root {
+    --bg: #F6F3EC;
+    --surface: #FFFFFF;
+    --surface-2: #FBF9F4;
+    --border: #E3DFD3;
+    --text: #201D17;
+    --text-muted: #746F62;
+    --accent: #9C6B28;
+    --accent-soft: #EFDFC3;
+    --accent-ring: #C68A3D;
+    --good: #3F7D53;
+    --good-soft: #DCEBDF;
+    --warn: #A6472A;
+    --warn-soft: #F3DCD1;
+    --gap-soft: #EDEAE0;
+    --gap-text: #6E6A5E;
+    --user-bg: #201D17;
+    --user-fg: #F6F3EC;
+    --bot-bg: var(--surface);
+    --bot-fg: var(--text);
+    --shadow: 0 1px 2px rgba(32,29,23,0.06), 0 6px 20px -8px rgba(32,29,23,0.18);
+    --font-display: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15161B;
+      --surface: #1C1E24;
+      --surface-2: #21232A;
+      --border: #2C2F37;
+      --text: #ECE8DE;
+      --text-muted: #9A968A;
+      --accent: #D9A54F;
+      --accent-soft: #3A2E1A;
+      --accent-ring: #E3B562;
+      --good: #6FBF86;
+      --good-soft: #1E3324;
+      --warn: #E08A64;
+      --warn-soft: #3B241C;
+      --gap-soft: #262820;
+      --gap-text: #ABA694;
+      --user-bg: #ECE8DE;
+      --user-fg: #15161B;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 30px -12px rgba(0,0,0,0.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #15161B; --surface: #1C1E24; --surface-2: #21232A; --border: #2C2F37;
+    --text: #ECE8DE; --text-muted: #9A968A; --accent: #D9A54F; --accent-soft: #3A2E1A;
+    --accent-ring: #E3B562; --good: #6FBF86; --good-soft: #1E3324; --warn: #E08A64;
+    --warn-soft: #3B241C; --gap-soft: #262820; --gap-text: #ABA694;
+    --user-bg: #ECE8DE; --user-fg: #15161B;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 30px -12px rgba(0,0,0,0.6);
+  }
+  :root[data-theme="light"] {
+    --bg: #F6F3EC; --surface: #FFFFFF; --surface-2: #FBF9F4; --border: #E3DFD3;
+    --text: #201D17; --text-muted: #746F62; --accent: #9C6B28; --accent-soft: #EFDFC3;
+    --accent-ring: #C68A3D; --good: #3F7D53; --good-soft: #DCEBDF; --warn: #A6472A;
+    --warn-soft: #F3DCD1; --gap-soft: #EDEAE0; --gap-text: #6E6A5E;
+    --user-bg: #201D17; --user-fg: #F6F3EC;
+    --shadow: 0 1px 2px rgba(32,29,23,0.06), 0 6px 20px -8px rgba(32,29,23,0.18);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { min-height: 100vh; }
+
+  a { color: inherit; }
+
+  .app {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 28px 20px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 100vh;
+  }
+
+  /* ---------- Header ---------- */
+  header.top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+  }
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .mark {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-ring);
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 19px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+  }
+  .wordmark h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: 0.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .wordmark .sub {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    letter-spacing: 0.02em;
+  }
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-ring);
+    border-radius: 999px;
+    padding: 5px 10px;
+    white-space: nowrap;
+  }
+
+  .notice {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    line-height: 1.55;
+  }
+  .notice b { color: var(--text); font-weight: 600; }
+  .notice code {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+
+  /* ---------- Layout ---------- */
+  .layout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 16px;
+    flex: 1;
+    min-height: 0;
+  }
+  @media (max-width: 760px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  .rail {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    align-self: start;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .rail-group h2 {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+  .rail-group.sensitive h2 { color: var(--warn); }
+  .chip-list { display: flex; flex-direction: column; gap: 6px; }
+  .chip {
+    text-align: left;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+    line-height: 1.35;
+  }
+  .chip:hover { border-color: var(--accent-ring); }
+  .chip:focus-visible {
+    outline: 2px solid var(--accent-ring);
+    outline-offset: 1px;
+  }
+  .rail-group.sensitive .chip {
+    background: var(--warn-soft);
+    border-color: color-mix(in srgb, var(--warn) 35%, var(--border));
+  }
+
+  /* ---------- Chat pane ---------- */
+  .chat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    min-height: 560px;
+    overflow: hidden;
+  }
+  .chat-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .chat-head .who {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+  .dot-online {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--good);
+    flex: none;
+  }
+  .reset-btn {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  .reset-btn:hover { color: var(--text); border-color: var(--accent-ring); }
+
+  .thread {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .msg-row { display: flex; gap: 10px; max-width: 86%; }
+  .msg-row.user { align-self: flex-end; flex-direction: row-reverse; max-width: 78%; }
+  .msg-row.bot { align-self: flex-start; }
+
+  .avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    flex: none;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .msg-row.bot .avatar {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-ring);
+    color: var(--accent);
+  }
+  .msg-row.user .avatar {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .bubble-col { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .msg-row.user .bubble-col { align-items: flex-end; }
+
+  .bubble {
+    border-radius: 12px;
+    padding: 9px 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+  .msg-row.bot .bubble {
+    background: var(--bot-bg);
+    color: var(--bot-fg);
+    border: 1px solid var(--border);
+    border-top-left-radius: 4px;
+  }
+  .msg-row.user .bubble {
+    background: var(--user-bg);
+    color: var(--user-fg);
+    border-top-right-radius: 4px;
+  }
+
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--text-muted);
+  }
+  .msg-row.user .meta-row { justify-content: flex-end; }
+  .tabular { font-variant-numeric: tabular-nums; }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    border-radius: 999px;
+    padding: 3px 9px;
+    border: 1px solid transparent;
+    width: fit-content;
+  }
+  .tag.source { background: var(--good-soft); color: var(--good); border-color: color-mix(in srgb, var(--good) 35%, transparent); }
+  .tag.escalate { background: var(--warn-soft); color: var(--warn); border-color: color-mix(in srgb, var(--warn) 35%, transparent); }
+  .tag.gap { background: var(--gap-soft); color: var(--gap-text); border-color: var(--border); border-style: dashed; }
+  .tag .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+
+  .typing {
+    align-self: flex-start;
+    display: flex;
+    gap: 4px;
+    padding: 10px 12px;
+    background: var(--bot-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    border-top-left-radius: 4px;
+    width: fit-content;
+    margin-left: 36px;
+  }
+  .typing span {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--text-muted);
+    animation: blink 1.1s infinite ease-in-out;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.15s; }
+  .typing span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    .typing span { animation: none; opacity: 0.7; }
+  }
+
+  .composer {
+    display: flex;
+    gap: 8px;
+    padding: 12px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+  .composer input {
+    flex: 1;
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+  }
+  .composer input::placeholder { color: var(--text-muted); }
+  .composer input:focus-visible {
+    outline: 2px solid var(--accent-ring);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+  .composer button {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--accent-ring);
+    background: var(--accent);
+    color: var(--surface);
+    cursor: pointer;
+  }
+  :root[data-theme="dark"] .composer button, @media (prefers-color-scheme: dark) {
+    .composer button { color: #15161B; }
+  }
+  .composer button:hover { filter: brightness(1.05); }
+  .composer button:focus-visible { outline: 2px solid var(--accent-ring); outline-offset: 2px; }
+
+  footer.foot {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    text-align: center;
+    padding-top: 4px;
+    line-height: 1.6;
+  }
+  footer.foot code {
+    font-family: var(--font-mono);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="wordmark">
+      <div class="mark">A</div>
+      <div>
+        <h1>Aurelia Onboarding Assistant</h1>
+        <div class="sub">New-hire Q&amp;A · Slack-style prototype</div>
+      </div>
+    </div>
+    <span class="badge">Illustrative demo</span>
+  </header>
+
+  <p class="notice">
+    <b>This is a non-functional illustration</b>, not the validated prototype called for by work package
+    <code>1.2.6</code>. Responses are canned, matched by keyword, and drawn from a fictional document set for
+    Aurelia Software GmbH. It exists to make the design decisions in <code>wbs-dictionary.md</code> concrete:
+    every answer cites a source, and questions matching the safety or legal boundary in
+    <code>project-brief.md</code> are escalated rather than answered — nothing here is measured evidence.
+  </p>
+
+  <div class="layout">
+    <nav class="rail" aria-label="Suggested onboarding questions">
+      <div class="rail-group">
+        <h2>Getting set up</h2>
+        <div class="chip-list">
+          <button class="chip" data-q="How do I get my laptop and IT accounts set up?">Laptop &amp; IT account setup</button>
+          <button class="chip" data-q="How do I request access to a Slack or Teams channel?">Requesting channel access</button>
+        </div>
+      </div>
+      <div class="rail-group">
+        <h2>Pay &amp; policy</h2>
+        <div class="chip-list">
+          <button class="chip" data-q="When is the deadline to enroll in benefits?">Benefits enrolment deadline</button>
+          <button class="chip" data-q="What is the travel and expense policy?">Travel &amp; expense policy</button>
+        </div>
+      </div>
+      <div class="rail-group">
+        <h2>People &amp; structure</h2>
+        <div class="chip-list">
+          <button class="chip" data-q="Who is my onboarding buddy and how do I reach them?">Finding my onboarding buddy</button>
+          <button class="chip" data-q="Where can I see the org chart and who my skip-level is?">Org chart &amp; skip-level</button>
+          <button class="chip" data-q="What is the probation period and review schedule?">Probation &amp; review schedule</button>
+        </div>
+      </div>
+      <div class="rail-group sensitive">
+        <h2>Try the escalation path</h2>
+        <div class="chip-list">
+          <button class="chip" data-q="I think my manager has been harassing me, what should I do?">A harassment concern</button>
+          <button class="chip" data-q="Can you confirm whether my visa sponsorship will be approved?">A visa / legal question</button>
+          <button class="chip" data-q="What's the WiFi password on the 4th floor?">Something off-topic</button>
+        </div>
+      </div>
+    </nav>
+
+    <section class="chat" aria-label="Conversation with the onboarding assistant">
+      <div class="chat-head">
+        <div class="who"><span class="dot-online"></span> Aurelia Assistant</div>
+        <button class="reset-btn" id="resetBtn" type="button">Reset conversation</button>
+      </div>
+      <div class="thread" id="thread" role="log" aria-live="polite"></div>
+      <form class="composer" id="composer">
+        <input id="composerInput" type="text" placeholder="Ask an onboarding question…" autocomplete="off" aria-label="Message" />
+        <button type="submit">Send</button>
+      </form>
+    </section>
+  </div>
+
+  <footer class="foot">
+    Fictional company, fictional documents — part of the Aurelia onboarding-assistant feasibility exercise.<br />
+    Real scope and open conditions live in <code>decision-memo.md</code> and <code>wbs-dictionary.md</code>, not in this demo.
+  </footer>
+</div>
+
+<script>
+  (function () {
+    "use strict";
+
+    var KB = [
+      {
+        keywords: ["laptop", "it account", "it setup", "hardware", "equipment", "set up my"],
+        question: "How do I get my laptop and IT accounts set up?",
+        answer: "Your laptop and core accounts (email, SSO, calendar) are provisioned automatically once your start date is confirmed in the HR system, usually ready by your first morning. Hardware pickup or shipping is arranged by the IT desk.",
+        source: "IT Onboarding Setup Guide, §2"
+      },
+      {
+        keywords: ["channel access", "slack", "teams channel", "workspace access"],
+        question: "How do I request access to a Slack or Teams channel?",
+        answer: "Team and project channels are usually added by your manager in week one. For anything else, post in #it-access-requests with the channel name and your team lead's name.",
+        source: "Workspace Access Guide, §1.3"
+      },
+      {
+        keywords: ["benefits", "enroll", "enrolment", "enrollment", "deadline"],
+        question: "When is the deadline to enroll in benefits?",
+        answer: "Benefits elections are due within 30 calendar days of your start date. After that window, changes generally have to wait for the next open enrolment period, except for qualifying life events.",
+        source: "Benefits Enrolment Policy, v3"
+      },
+      {
+        keywords: ["travel", "expense", "reimburse"],
+        question: "What is the travel and expense policy?",
+        answer: "Business travel and reasonable expenses are reimbursed against a receipt within 60 days. Flights and hotels above the standard tier need manager approval before booking.",
+        source: "Travel & Expense Policy, §4"
+      },
+      {
+        keywords: ["buddy", "onboarding buddy"],
+        question: "Who is my onboarding buddy and how do I reach them?",
+        answer: "Your onboarding buddy is assigned by your manager in your first week and introduced by email or in your team channel. They're your go-to for informal, day-to-day questions during your first 90 days.",
+        source: "New-Hire Buddy Programme Guide"
+      },
+      {
+        keywords: ["org chart", "skip-level", "skip level", "org structure", "reporting line"],
+        question: "Where can I see the org chart and who my skip-level is?",
+        answer: "The current org chart is maintained in the People directory and updates automatically from the HR system, so it reflects reporting lines as of this week rather than a static PDF.",
+        source: "Org Structure Directory"
+      },
+      {
+        keywords: ["probation", "review schedule", "performance review"],
+        question: "What is the probation period and review schedule?",
+        answer: "The standard probation period is six months, with a check-in at week six and a formal review before the end of month five so there's time to act on feedback before probation ends.",
+        source: "Employee Handbook, §4.2"
+      }
+    ];
+
+    var ESCALATE_TRIGGERS = [
+      { keywords: ["harass", "bully", "discriminat", "abuse"], reason: "a workplace conduct concern" },
+      { keywords: ["visa", "sponsorship", "immigration", "legal advice", "lawsuit", "disciplinary", "fired", "termination"], reason: "an individualised legal or employment question" },
+      { keywords: ["salary", "pay rise", "medical condition", "diagnosis", "therapist", "mental health crisis"], reason: "a sensitive personal or medical matter" }
+    ];
+
+    var thread = document.getElementById("thread");
+    var form = document.getElementById("composer");
+    var input = document.getElementById("composerInput");
+    var resetBtn = document.getElementById("resetBtn");
+
+    function timeNow() {
+      var d = new Date(2026, 6, 30, 9, Math.min(59, thread.querySelectorAll(".msg-row").length * 2 + 1));
+      var h = d.getHours() % 12 || 12;
+      var m = String(d.getMinutes()).padStart(2, "0");
+      var ap = d.getHours() >= 12 ? "PM" : "AM";
+      return h + ":" + m + " " + ap;
+    }
+
+    function scrollToEnd() {
+      thread.scrollTop = thread.scrollHeight;
+    }
+
+    function addUserMessage(text) {
+      var row = document.createElement("div");
+      row.className = "msg-row user";
+      row.innerHTML =
+        '<div class="avatar">You</div>' +
+        '<div class="bubble-col">' +
+          '<div class="bubble"></div>' +
+          '<div class="meta-row"><span class="tabular">' + timeNow() + "</span></div>" +
+        "</div>";
+      row.querySelector(".bubble").textContent = text;
+      thread.appendChild(row);
+      scrollToEnd();
+    }
+
+    function addBotMessage(node) {
+      var row = document.createElement("div");
+      row.className = "msg-row bot";
+      var avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.textContent = "A";
+      row.appendChild(avatar);
+      var col = document.createElement("div");
+      col.className = "bubble-col";
+      col.appendChild(node);
+      row.appendChild(col);
+      thread.appendChild(row);
+      scrollToEnd();
+    }
+
+    function buildAnswerBubble(entry) {
+      var wrap = document.createDocumentFragment();
+      var bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = entry.answer;
+      wrap.appendChild(bubble);
+      var tag = document.createElement("span");
+      tag.className = "tag source";
+      tag.innerHTML = '<span class="dot"></span>Source: ' + entry.source;
+      wrap.appendChild(tag);
+      var meta = document.createElement("div");
+      meta.className = "meta-row";
+      meta.innerHTML = '<span class="tabular">' + timeNow() + "</span>";
+      wrap.appendChild(meta);
+      return wrap;
+    }
+
+    function buildEscalationBubble(reason) {
+      var wrap = document.createDocumentFragment();
+      var bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = "This looks like " + reason + " — that's outside what I'm set up to answer, so I'm not going to guess. I've flagged it to the People team, and someone will follow up with you directly.";
+      wrap.appendChild(bubble);
+      var tag = document.createElement("span");
+      tag.className = "tag escalate";
+      tag.innerHTML = '<span class="dot"></span>Escalated · People team review';
+      wrap.appendChild(tag);
+      var meta = document.createElement("div");
+      meta.className = "meta-row";
+      meta.innerHTML = '<span class="tabular">' + timeNow() + "</span>";
+      wrap.appendChild(meta);
+      return wrap;
+    }
+
+    function buildGapBubble() {
+      var wrap = document.createDocumentFragment();
+      var bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = "I don't have a confident answer to that in the current onboarding docs. I've logged it as a content gap so the People team can add it.";
+      wrap.appendChild(bubble);
+      var tag = document.createElement("span");
+      tag.className = "tag gap";
+      tag.innerHTML = '<span class="dot"></span>Logged · content gap, not answered';
+      wrap.appendChild(tag);
+      var meta = document.createElement("div");
+      meta.className = "meta-row";
+      meta.innerHTML = '<span class="tabular">' + timeNow() + "</span>";
+      wrap.appendChild(meta);
+      return wrap;
+    }
+
+    function matchEscalation(lower) {
+      for (var i = 0; i < ESCALATE_TRIGGERS.length; i++) {
+        var t = ESCALATE_TRIGGERS[i];
+        for (var j = 0; j < t.keywords.length; j++) {
+          if (lower.indexOf(t.keywords[j]) !== -1) return t.reason;
+        }
+      }
+      return null;
+    }
+
+    function matchKnowledge(lower) {
+      for (var i = 0; i < KB.length; i++) {
+        var entry = KB[i];
+        for (var j = 0; j < entry.keywords.length; j++) {
+          if (lower.indexOf(entry.keywords[j]) !== -1) return entry;
+        }
+      }
+      return null;
+    }
+
+    function showTyping(callback) {
+      var typing = document.createElement("div");
+      typing.className = "typing";
+      typing.innerHTML = "<span></span><span></span><span></span>";
+      typing.setAttribute("aria-hidden", "true");
+      thread.appendChild(typing);
+      scrollToEnd();
+      var delay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 120 : 650;
+      setTimeout(function () {
+        typing.remove();
+        callback();
+      }, delay);
+    }
+
+    function respondTo(text) {
+      var lower = text.toLowerCase();
+      showTyping(function () {
+        var reason = matchEscalation(lower);
+        if (reason) {
+          addBotMessage(buildEscalationBubble(reason));
+          return;
+        }
+        var entry = matchKnowledge(lower);
+        if (entry) {
+          addBotMessage(buildAnswerBubble(entry));
+          return;
+        }
+        addBotMessage(buildGapBubble());
+      });
+    }
+
+    function sendMessage(text) {
+      text = text.trim();
+      if (!text) return;
+      addUserMessage(text);
+      respondTo(text);
+    }
+
+    function greet() {
+      thread.innerHTML = "";
+      var wrap = document.createDocumentFragment();
+      var bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = "Hi, welcome to Aurelia! Ask me about IT setup, benefits, your buddy, or org structure — or pick a question from the left. I'll cite where each answer comes from, and I'll hand off anything sensitive to a person instead of guessing.";
+      wrap.appendChild(bubble);
+      var meta = document.createElement("div");
+      meta.className = "meta-row";
+      meta.innerHTML = '<span class="tabular">9:00 AM</span>';
+      wrap.appendChild(meta);
+      addBotMessage(wrap);
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      sendMessage(input.value);
+      input.value = "";
+      input.focus();
+    });
+
+    document.querySelectorAll(".chip").forEach(function (chip) {
+      chip.addEventListener("click", function () {
+        sendMessage(chip.getAttribute("data-q"));
+      });
+    });
+
+    resetBtn.addEventListener("click", greet);
+
+    greet();
+  })();
+</script>
+
+<style>.pf-back{position:fixed;left:12px;bottom:12px;z-index:2147483000;font:600 13px/1 system-ui,Segoe UI,Arial,sans-serif;background:#1f4e79;color:#fff;text-decoration:none;padding:9px 13px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.3);opacity:.92}.pf-back:hover{opacity:1}@media print{.pf-back{display:none}}</style><a class="pf-back" href="../projects/aurelia-feasibility.html">&larr; Back to case study</a></body></html>

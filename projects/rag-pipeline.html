@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAG Pipeline with LangChain · Karthikeyan Arumugam</title>
+<meta name="description" content="Case study: a retrieval-augmented generation pipeline over PDFs with LangChain, Chroma, HuggingFace embeddings and a hosted open-weight LLM, with honest scope notes.">
+<meta name="theme-color" content="#1f4e79">
+<meta property="og:type" content="website">
+<meta property="og:title" content="RAG Pipeline with LangChain · Karthikeyan Arumugam">
+<meta property="og:description" content="Case study: a retrieval-augmented generation pipeline over PDFs with LangChain, Chroma, HuggingFace embeddings and a hosted open-weight LLM, with honest scope notes.">
+<meta property="og:image" content="https://karthikarumukam-code.github.io/assets/img/og.jpg">
+<meta property="og:url" content="https://karthikarumukam-code.github.io/projects/rag-pipeline.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="../index.html">Karthikeyan Arumugam</a>
+    <nav class="nav" aria-label="Main">
+      <a class="hide-xs" href="../index.html#projects">Projects</a>
+      <a class="hide-sm" href="../index.html#how-i-work">How I work</a>
+      <a class="hide-sm" href="../index.html#coursework">Coursework</a>
+      <a class="hide-sm" href="../index.html#background">Background</a>
+      <a href="../index.html#contact">Contact</a>
+      <button class="theme-btn" id="theme-btn" type="button" aria-label="Switch light or dark theme" title="Switch light or dark theme">&#9788;</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap narrow">
+    <p class="crumb"><a href="../index.html#projects">&larr; All projects</a></p>
+    <div class="p-hero">
+      <div class="eyebrow">Bootcamp workshop project</div>
+      <h1>RAG Pipeline with LangChain</h1>
+      <p class="lead">A question-answering pipeline over PDF documents: retrieve the relevant passages, then let a language model answer from them. Built from scratch first, then with LangChain.</p>
+      <ul class="chips"><li>Python</li><li>LangChain</li><li>Chroma</li><li>HuggingFace embeddings</li><li>Groq (gpt-oss)</li></ul>
+    </div>
+  </div>
+  <div class="wrap"><dl class="facts"><div class='fact'><dt>Type</dt><dd>Guided workshop<small>neuefische AI PM certificate</small></dd></div><div class='fact'><dt>Stack</dt><dd>LangChain, Chroma<small>HuggingFace embeddings</small></dd></div><div class='fact'><dt>Model</dt><dd>gpt-oss<small>hosted on Groq</small></dd></div><div class='fact'><dt>Status</dt><dd>Workshop scope<small>Not a production system</small></dd></div></dl></div>
+  <div class="wrap narrow article">
+
+<section>
+  <h2>What this is</h2>
+  <p>A retrieval-augmented generation pipeline: ask a question, find the most relevant passages in a set of PDF documents, and have a language model answer using only those passages. I built it twice during a bootcamp workshop, first from scratch to see every moving part, then with LangChain, Chroma, HuggingFace embeddings and a hosted open-weight model (gpt-oss on Groq).</p>
+  <div class="callout warn"><p><strong>Scope.</strong> This was a guided workshop, not a production system. It used a small document set, had no user testing and was not deployed. I include it because understanding how RAG works is the base for judging RAG proposals as a project manager.</p></div>
+</section>
+
+<section>
+  <h2>How the pipeline works</h2>
+  <div class="flow-label">Indexing, done once per document set</div>
+  <ol class="flow" style="--n:4">
+    <li class="node"><b>1. Load and clean</b><span>PDF text converted to clean, structured text</span></li>
+    <li class="node"><b>2. Chunk</b><span>Split into passages small enough to retrieve precisely</span></li>
+    <li class="node"><b>3. Embed</b><span>Each chunk becomes a vector with a sentence-embedding model (all-mpnet-base-v2)</span></li>
+    <li class="node"><b>4. Store</b><span>Vectors and text saved in a Chroma vector database</span></li>
+  </ol>
+  <div class="flow-label">Answering, done for every question</div>
+  <ol class="flow" style="--n:4">
+    <li class="node"><b>5. Question</b><span>The user's question is embedded the same way</span></li>
+    <li class="node"><b>6. Retrieve</b><span>The closest chunks are fetched from Chroma</span></li>
+    <li class="node"><b>7. Generate</b><span>The LLM answers from the retrieved text, not from memory</span></li>
+    <li class="node human"><b>8. Answer with sources</b><span>The reply points back to the passages it used</span></li>
+  </ol>
+</section>
+
+<section>
+  <h2>Why build it from scratch first</h2>
+  <p>A framework hides the decisions that decide quality. Building the loop by hand (chunking, embedding, similarity search, prompt assembly) made the trade-offs concrete: chunks that are too large blur the match, chunks that are too small lose context, and retrieving too few passages starves the model while retrieving too many invites noise. Rebuilding with LangChain then showed what a framework saves and what it abstracts away.</p>
+  <p>The workshop also covered cleaning PDFs into Markdown, adding source citations to answers, and using an LLM as a judge to evaluate answers.</p>
+</section>
+
+<section>
+  <h2>What I take from it as a project manager</h2>
+  <ul>
+    <li>RAG quality is largely decided before the language model is involved: document cleaning, chunking and retrieval. Acceptance criteria should test retrieval separately from generation.</li>
+    <li>Citations turn an answer into something a person can check. For any assistant that answers from company documents, I would make them a requirement, not a nice-to-have.</li>
+    <li>An assistant needs a defined moment where it stops and hands over to a person. That is the design principle behind the escalation path in the <a href="aurelia-feasibility.html">Aurelia feasibility case</a>.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Limits</h2>
+  <div class="callout warn">
+    <ul>
+      <li>Small document set and workshop scope: nothing here shows how the pipeline behaves at scale or with messy company documents.</li>
+      <li>No systematic evaluation of retrieval quality beyond the workshop exercises.</li>
+      <li>The hosted model is a third-party service; a real deployment with personal data would need a data-protection review first.</li>
+    </ul>
+  </div>
+</section>
+
+    <div class="pager"><a href="test-bench.html">&larr; Predicting Test-Bench Time</a><a href="aurelia-feasibility.html">Onboarding Assistant &rarr;</a></div>
+  </div>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <p>&copy; 2026 Karthikeyan Arumugam. Essen, Germany.</p>
+    <p>All projects shown are training or portfolio work. Aurelia Software GmbH is a fictional company from a course case. The site uses no cookies, trackers or external fonts.</p>
+  </div>
+</footer>
+<script>
+(function(){
+  var b=document.getElementById('theme-btn'); if(!b) return;
+  function cur(){var t=document.documentElement.getAttribute('data-theme'); if(t) return t; return (window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}
+  b.addEventListener('click',function(){var n=cur()==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',n); try{localStorage.setItem('theme',n);}catch(e){}});
+})();
+</script>
+</body>
+</html>

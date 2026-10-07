@@ -1,0 +1,294 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Risk Radar PM Workflow</title>
+<style>
+  :root{
+    --bg:#EEEDE7; --surface:#FBFAF6; --surface-2:#E4E2D9; --border:#D3D0C4;
+    --ink:#1C2422; --ink-muted:#5C6662; --ink-faint:#8A928D;
+    --accent:#2C5F68; --accent-soft:#DCE7E6; --accent-ink:#173940;
+    --go:#3C7A56; --go-soft:#DFEAE1; --go-ink:#1F4A31;
+    --caution:#A9701B; --caution-soft:#F3E6D2; --caution-ink:#6B4610;
+    --stop:#A23B34; --stop-soft:#F4DEDA; --stop-ink:#6E2721;
+    --shadow: 0 1px 2px rgba(28,36,34,.06), 0 6px 20px -8px rgba(28,36,34,.14);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14181A; --surface:#1B2123; --surface-2:#222A2C; --border:#2B3436;
+      --ink:#E9ECE9; --ink-muted:#9FADA9; --ink-faint:#6E7A76;
+      --accent:#6FB3BC; --accent-soft:#20383C; --accent-ink:#BFE4E8;
+      --go:#6FBE8E; --go-soft:#1E3327; --go-ink:#B8E6CB;
+      --caution:#E3A94B; --caution-soft:#3A2B14; --caution-ink:#F3D49A;
+      --stop:#E1766D; --stop-soft:#3A211E; --stop-ink:#F4B6AF;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -10px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14181A; --surface:#1B2123; --surface-2:#222A2C; --border:#2B3436;
+    --ink:#E9ECE9; --ink-muted:#9FADA9; --ink-faint:#6E7A76;
+    --accent:#6FB3BC; --accent-soft:#20383C; --accent-ink:#BFE4E8;
+    --go:#6FBE8E; --go-soft:#1E3327; --go-ink:#B8E6CB;
+    --caution:#E3A94B; --caution-soft:#3A2B14; --caution-ink:#F3D49A;
+    --stop:#E1766D; --stop-soft:#3A211E; --stop-ink:#F4B6AF;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -10px rgba(0,0,0,.55);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"IBM Plex Sans", system-ui, sans-serif;
+    line-height:1.5;
+  }
+  .page{ max-width:960px; margin:0 auto; padding:56px 28px 80px; }
+
+  .eyebrow{
+    font-family:"IBM Plex Mono", monospace; font-size:12px; font-weight:600;
+    letter-spacing:.12em; text-transform:uppercase; color:var(--accent);
+  }
+  h1{
+    font-family:"Fraunces", serif; font-weight:680; font-optical-sizing:auto;
+    font-size:clamp(34px,5vw,50px); line-height:1.03; letter-spacing:-.01em;
+    margin:10px 0 14px; text-wrap:balance;
+  }
+  .framing{ max-width:64ch; color:var(--ink-muted); font-size:16px; margin:0 0 40px; }
+  .framing strong{ color:var(--ink); font-weight:600; }
+
+  h2{
+    font-family:"Fraunces", serif; font-weight:600; font-size:21px;
+    margin:0 0 4px; letter-spacing:-.005em;
+  }
+  .section-sub{ color:var(--ink-faint); font-size:13px; margin:0 0 20px; }
+
+  figure{ margin:0 0 48px; }
+  .diagram-frame{
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:20px 18px 14px; box-shadow:var(--shadow); overflow-x:auto;
+  }
+  svg text{ font-family:"IBM Plex Sans", system-ui, sans-serif; fill:currentColor; }
+  svg .mono{ font-family:"IBM Plex Mono", monospace; }
+  figcaption{
+    font-size:13px; color:var(--ink-muted); margin-top:12px; max-width:70ch;
+  }
+  figcaption b{ color:var(--ink); font-weight:600; }
+
+  .flow{ display:flex; flex-direction:column; }
+  .fstep{
+    display:grid; grid-template-columns:40px 1fr; gap:16px;
+    padding-bottom:28px; position:relative;
+  }
+  .fstep .rail{
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .fstep .node{
+    width:30px; height:30px; border-radius:50%; background:var(--accent);
+    color:var(--surface); flex:none; display:flex; align-items:center; justify-content:center;
+    font-family:"IBM Plex Mono", monospace; font-weight:600; font-size:13px;
+    box-shadow:var(--shadow);
+  }
+  .fstep .line{ width:2px; flex:1; background:var(--border); margin-top:4px; }
+  .fstep:last-child .line{ display:none; }
+  .fstep:last-child{ padding-bottom:0; }
+
+  .fcard{
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:18px 20px; box-shadow:var(--shadow);
+  }
+  .fcard h3{ font-family:"Fraunces", serif; font-weight:600; font-size:17px; margin:0 0 12px; }
+  .flabels{ display:grid; grid-template-columns:1fr 1fr; gap:10px 24px; margin-bottom:12px; }
+  @media (max-width:560px){ .flabels{ grid-template-columns:1fr; } }
+  .flabels .fl{
+    font-family:"IBM Plex Mono", monospace; font-size:10px; font-weight:600;
+    letter-spacing:.07em; text-transform:uppercase; color:var(--ink-faint);
+    margin-bottom:3px;
+  }
+  .flabels .fv{ font-size:13.5px; color:var(--ink-muted); }
+  .note{
+    display:flex; gap:8px; align-items:flex-start; font-size:13px;
+    background:var(--surface-2); border-radius:8px; padding:10px 12px; margin-top:10px;
+  }
+  .note-tag{
+    font-family:"IBM Plex Mono", monospace; font-size:9.5px; font-weight:600;
+    letter-spacing:.07em; text-transform:uppercase; flex:none;
+    padding:2px 7px; border-radius:100px; margin-top:1px;
+  }
+  .note-tag.caution{ background:var(--caution-soft); color:var(--caution-ink); }
+  .note-tag.go{ background:var(--go-soft); color:var(--go-ink); }
+  .note-tag.stop{ background:var(--stop-soft); color:var(--stop-ink); }
+  .note-tag.info{ background:var(--accent-soft); color:var(--accent-ink); }
+  .note p{ margin:0; color:var(--ink-muted); }
+
+  footer{
+    margin-top:48px; padding-top:20px; border-top:1px solid var(--border);
+    font-size:12.5px; color:var(--ink-faint);
+  }
+  footer p{ margin:0 0 6px; }
+  footer code{
+    font-family:"IBM Plex Mono", monospace; background:var(--surface-2);
+    padding:1px 5px; border-radius:4px; font-size:11.5px;
+  }
+</style>
+
+<div class="page">
+  <div class="eyebrow">AI Project Risk Radar &middot; As Built</div>
+  <h1>The PM Workflow</h1>
+  <p class="framing">
+    <strong>Two layers, read together:</strong> where the tool sits inside a
+    PM's real reporting cycle, and what actually happens once they open it.
+    Both are drawn from the shipped prototype, not a proposed design.
+  </p>
+
+  <figure>
+    <div class="diagram-frame">
+      <svg viewBox="0 0 980 232" role="img" aria-label="A six-stage project reporting cycle. Risk Radar reads the documents produced in stages two through four and surfaces its flags before stage five, leadership review. Stages one and six happen entirely outside the tool, and the cycle repeats every reporting period.">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+          <marker id="arrowAccent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+          </marker>
+        </defs>
+
+        <!-- stage boxes -->
+        <g class="mono" font-size="10" font-weight="600">
+          <!-- 1 -->
+          <rect x="20" y="40" width="140" height="64" rx="8" fill="none" stroke="var(--ink-faint)" stroke-width="1.4"/>
+          <text x="90" y="64" text-anchor="middle" fill="var(--ink-faint)">01</text>
+          <text x="90" y="82" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="var(--ink-faint)">Gather updates</text>
+
+          <!-- 2 -->
+          <rect x="180" y="40" width="140" height="64" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6"/>
+          <text x="250" y="64" text-anchor="middle" fill="var(--accent-ink)">02</text>
+          <text x="250" y="82" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="var(--accent-ink)">Write status report</text>
+
+          <!-- 3 -->
+          <rect x="340" y="40" width="140" height="64" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6"/>
+          <text x="410" y="64" text-anchor="middle" fill="var(--accent-ink)">03</text>
+          <text x="410" y="82" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="var(--accent-ink)">Update RAID log</text>
+
+          <!-- 4 -->
+          <rect x="500" y="40" width="140" height="64" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6"/>
+          <text x="570" y="64" text-anchor="middle" fill="var(--accent-ink)">04</text>
+          <text x="570" y="82" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="var(--accent-ink)">Attend meetings</text>
+
+          <!-- 5 -->
+          <rect x="660" y="40" width="140" height="64" rx="8" fill="none" stroke="var(--ink)" stroke-width="1.6"/>
+          <text x="730" y="64" text-anchor="middle" fill="var(--ink)">05</text>
+          <text x="730" y="82" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="var(--ink)">Leadership review</text>
+
+          <!-- 6 -->
+          <rect x="820" y="40" width="140" height="64" rx="8" fill="none" stroke="var(--ink-faint)" stroke-width="1.4"/>
+          <text x="890" y="64" text-anchor="middle" fill="var(--ink-faint)">06</text>
+          <text x="890" y="82" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="var(--ink-faint)">React to escalation</text>
+        </g>
+
+        <!-- connecting arrows between stages -->
+        <g stroke="currentColor" stroke-width="1.4" color="var(--ink-faint)">
+          <line x1="160" y1="72" x2="177" y2="72" marker-end="url(#arrow)"/>
+          <line x1="320" y1="72" x2="337" y2="72" marker-end="url(#arrow)"/>
+          <line x1="480" y1="72" x2="497" y2="72" marker-end="url(#arrow)"/>
+          <line x1="640" y1="72" x2="657" y2="72" marker-end="url(#arrow)"/>
+          <line x1="800" y1="72" x2="817" y2="72" marker-end="url(#arrow)"/>
+        </g>
+
+        <!-- loop back arrow -->
+        <path d="M890,104 L890,150 Q890,166 874,166 L106,166 Q90,166 90,150 L90,107" fill="none" stroke="var(--ink-faint)" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arrow)" color="var(--ink-faint)"/>
+        <text x="490" y="182" text-anchor="middle" font-size="10.5" fill="var(--ink-faint)">repeats every reporting cycle</text>
+
+        <!-- tool bracket under 2-3-4 -->
+        <rect x="180" y="118" width="460" height="30" rx="6" fill="var(--accent)"/>
+        <text x="410" y="137" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="var(--surface)">AI Project Risk Radar reads these documents</text>
+
+        <!-- arrow from bracket to stage 5 -->
+        <path d="M500,118 Q560,90 655,68" fill="none" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+        <text x="560" y="108" text-anchor="middle" font-size="10.5" fill="var(--accent-ink)">surfaces flags first</text>
+      </svg>
+    </div>
+    <figcaption>
+      <b>What this shows:</b> the tool touches only the middle of a PM's six-stage
+      reporting cycle. It ingests the status report, RAID log, and meeting
+      minutes produced in stages 2&ndash;4, then surfaces its flags before
+      stage 5's leadership review &mdash; before a PM has to notice the
+      pattern unaided. Stage 1 (gathering updates) and stage 6 (reacting to
+      an escalation) happen entirely outside the tool; it neither sources
+      information nor takes action.
+    </figcaption>
+  </figure>
+
+  <section>
+    <h2>Inside the app</h2>
+    <p class="section-sub">The five steps a PM actually walks through once they open the tool.</p>
+
+    <div class="flow">
+      <div class="fstep">
+        <div class="rail"><div class="node">1</div><div class="line"></div></div>
+        <div class="fcard">
+          <h3>Select a project</h3>
+          <div class="flabels">
+            <div><div class="fl">Intent</div><div class="fv">See this project's current risk picture</div></div>
+            <div><div class="fl">Interaction</div><div class="fv">Sidebar project switcher (5 demo projects), or upload your own documents</div></div>
+            <div><div class="fl">Response</div><div class="fv">Loads the project's documents and its computed risk snapshot</div></div>
+          </div>
+          <div class="note"><span class="note-tag caution">Gap</span><p>A project with no documents has no designed empty state yet.</p></div>
+        </div>
+      </div>
+
+      <div class="fstep">
+        <div class="rail"><div class="node">2</div><div class="line"></div></div>
+        <div class="fcard">
+          <h3>Read the dashboard</h3>
+          <div class="flabels">
+            <div><div class="fl">Intent</div><div class="fv">Understand overall health quickly</div></div>
+            <div><div class="fl">Interaction</div><div class="fv">Health badge, risk counts, the PM's own reported RAG shown next to the AI assessment</div></div>
+            <div><div class="fl">Response</div><div class="fv">Any divergence between the two is surfaced explicitly, never hidden</div></div>
+          </div>
+          <div class="note"><span class="note-tag info">As designed</span><p>The sharpest built case: a project reported AMBER by its PM, assessed RED by the tool &mdash; a real divergence, not staged.</p></div>
+        </div>
+      </div>
+
+      <div class="fstep">
+        <div class="rail"><div class="node">3</div><div class="line"></div></div>
+        <div class="fcard">
+          <h3>Inspect a risk</h3>
+          <div class="flabels">
+            <div><div class="fl">Intent</div><div class="fv">Decide whether to trust and act on a flag</div></div>
+            <div><div class="fl">Interaction</div><div class="fv">Expandable "why this was flagged" on each risk</div></div>
+            <div><div class="fl">Response</div><div class="fv">Shows the exact source sentence or RAID row that triggered it</div></div>
+          </div>
+          <div class="note"><span class="note-tag go">Confirms intent</span><p>The healthy-project case (no open risks) proves the tool stays quiet when nothing is actually wrong.</p></div>
+        </div>
+      </div>
+
+      <div class="fstep">
+        <div class="rail"><div class="node">4</div><div class="line"></div></div>
+        <div class="fcard">
+          <h3>Compare over time</h3>
+          <div class="flabels">
+            <div><div class="fl">Intent</div><div class="fv">See whether things are getting better or worse</div></div>
+            <div><div class="fl">Interaction</div><div class="fv">Trend chart built from the project's historical weekly status reports</div></div>
+            <div><div class="fl">Response</div><div class="fv">A per-week signal-count bar chart</div></div>
+          </div>
+          <div class="note"><span class="note-tag caution">Known limit</span><p>The count includes good-news mentions too &mdash; read it as a secondary diagnostic, not the primary signal.</p></div>
+        </div>
+      </div>
+
+      <div class="fstep">
+        <div class="rail"><div class="node">5</div></div>
+        <div class="fcard">
+          <h3>Switch extraction method</h3>
+          <div class="flabels">
+            <div><div class="fl">Intent</div><div class="fv">Compare the rule-based baseline against LLM-assisted extraction</div></div>
+            <div><div class="fl">Interaction</div><div class="fv">Sidebar provider dropdown: rule-based / Anthropic / OpenRouter</div></div>
+            <div><div class="fl">Response</div><div class="fv">Re-runs extraction on the same documents with the selected method</div></div>
+          </div>
+          <div class="note"><span class="note-tag stop">Unverified</span><p>The LLM providers have real code but have never run against a live API key in this environment &mdash; don't demo this state as validated.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Every step above is what the shipped prototype does today, not a proposed design &mdash; see the "as built" user journey and reporting-cycle map for the full reasoning.</p>
+    <p>Source: <code>ai-project-risk-radar/discovery/04-discovery-synthesis-and-prototype-brief.md</code> &middot; <code>ai-project-risk-radar/discovery/02-experience-map-and-personas.md</code></p>
+  </footer>
+</div>
+
+<style>.pf-back{position:fixed;left:12px;bottom:12px;z-index:2147483000;font:600 13px/1 system-ui,Segoe UI,Arial,sans-serif;background:#1f4e79;color:#fff;text-decoration:none;padding:9px 13px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.3);opacity:.92}.pf-back:hover{opacity:1}@media print{.pf-back{display:none}}</style><a class="pf-back" href="../projects/risk-radar.html">&larr; Back to case study</a></body></html>

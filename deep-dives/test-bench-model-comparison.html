@@ -1,0 +1,408 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>Model Comparison — Keep Random Forest</title>
+<style>
+  :root {
+    --page-bg: #E4E7E6;
+    --bg: #FFFFFF;
+    --panel: #F2F4F3;
+    --ink: #1C2321;
+    --ink-soft: #52605C;
+    --ink-faint: #8B978F;
+    --rule: #D7DDDA;
+    --accent: #B5551F;
+    --accent-soft: #E8DCCF;
+    --rf: #2F6F6B;
+    --rf-soft: #DCEAE8;
+    --nn: #8B4A6B;
+    --nn-soft: #EFDEE7;
+    --shadow: 0 30px 60px -30px rgba(28, 35, 33, 0.35);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page-bg: #101413;
+      --bg: #1A1F1E;
+      --panel: #202725;
+      --ink: #E9ECE9;
+      --ink-soft: #A6B2AC;
+      --ink-faint: #6D7975;
+      --rule: #313937;
+      --accent: #E39456;
+      --accent-soft: #3A2C1E;
+      --rf: #5FB3AB;
+      --rf-soft: #1E3230;
+      --nn: #C983A9;
+      --nn-soft: #322430;
+      --shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --page-bg: #101413;
+    --bg: #1A1F1E;
+    --panel: #202725;
+    --ink: #E9ECE9;
+    --ink-soft: #A6B2AC;
+    --ink-faint: #6D7975;
+    --rule: #313937;
+    --accent: #E39456;
+    --accent-soft: #3A2C1E;
+    --rf: #5FB3AB;
+    --rf-soft: #1E3230;
+    --nn: #C983A9;
+    --nn-soft: #322430;
+    --shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--page-bg);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 32px 16px;
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1180px;
+    aspect-ratio: 16 / 9.1;
+    background: var(--bg);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    padding: 40px 52px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    overflow: auto;
+  }
+
+  /* ---------- header ---------- */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .eyebrow {
+    font-size: 11.5px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+
+  h1 {
+    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    font-size: 27px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin: 0;
+    color: var(--ink);
+    text-wrap: balance;
+    max-width: 640px;
+  }
+
+  .decision-badge {
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .decision-badge .label {
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+
+  .decision-badge .value {
+    font-family: Georgia, serif;
+    font-size: 20px;
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* ---------- main grid ---------- */
+  .main {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 36px;
+    flex: 1;
+  }
+
+  .headline-stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .stat-number {
+    font-family: Georgia, "Iowan Old Style", serif;
+    font-size: 84px;
+    line-height: 0.95;
+    font-weight: 400;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-number span {
+    font-size: 34px;
+    color: var(--ink-soft);
+    margin-left: 4px;
+  }
+
+  .stat-caption {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 42ch;
+  }
+  .stat-caption strong { color: var(--ink); font-weight: 600; }
+
+  .threshold-bar {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 340px;
+  }
+  .threshold-track {
+    position: relative;
+    height: 8px;
+    background: var(--panel);
+    border-radius: 4px;
+    overflow: visible;
+  }
+  .threshold-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 100%;
+    background: var(--accent);
+    border-radius: 4px;
+    opacity: 0.85;
+  }
+  .threshold-mark {
+    position: absolute;
+    top: -4px;
+    bottom: -4px;
+    width: 2px;
+    background: var(--ink);
+    left: calc((0.3 / 0.356) * 100%);
+  }
+  .threshold-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- comparison table ---------- */
+  .compare {
+    background: var(--panel);
+    border-radius: 8px;
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .compare-head {
+    display: grid;
+    grid-template-columns: 1fr 96px 96px;
+    padding-bottom: 10px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .compare-head .metric-label { font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+  .compare-head .col-name {
+    font-size: 12px;
+    font-weight: 700;
+    text-align: right;
+    padding-left: 8px;
+  }
+  .col-rf { color: var(--rf); }
+  .col-nn { color: var(--nn); }
+
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1fr 96px 96px;
+    align-items: baseline;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .compare-row:last-child { border-bottom: none; }
+
+  .metric-label {
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  .metric-val {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-size: 14.5px;
+    padding-left: 8px;
+    white-space: nowrap;
+  }
+  .metric-val.win { color: var(--ink); font-weight: 700; }
+  .metric-val.lose { color: var(--ink-faint); }
+
+  /* ---------- evidence strip ---------- */
+  .evidence {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .card {
+    border-left: 3px solid var(--rule);
+    padding: 4px 0 4px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .card.confirms { border-left-color: var(--rf); }
+
+  .card .tag {
+    font-size: 10px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 700;
+  }
+  .card p {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .card p strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- footer ---------- */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    font-size: 11px;
+    color: var(--ink-faint);
+  }
+  .confidence {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .confidence .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--rf);
+  }
+
+  @media (max-width: 760px) {
+    .main { grid-template-columns: 1fr; }
+    .evidence { grid-template-columns: 1fr; }
+    .stat-number { font-size: 64px; }
+  }
+</style>
+
+<div class="slide">
+  <div class="header">
+    <div>
+      <p class="eyebrow">Model Comparison &nbsp;·&nbsp; Mercedes-Benz Test-Bench Time</p>
+      <h1>Random Forest vs. neural-network challenger, evaluated on a frozen 842-row test set</h1>
+    </div>
+    <div class="decision-badge">
+      <div class="label">Decision</div>
+      <div class="value">Keep Random Forest</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="headline-stat">
+      <div class="stat-number">0.356<span>sec worse</span></div>
+      <p class="stat-caption">
+        The neural network's test RMSE lands <strong>above the 0.3s practical-difference threshold</strong>
+        set before training — and holds across all 3 seeds (8.535 / 8.536 / 8.556s vs. RF's 8.186s).
+      </p>
+      <div class="threshold-bar">
+        <div class="threshold-track">
+          <div class="threshold-fill"></div>
+          <div class="threshold-mark"></div>
+        </div>
+        <div class="threshold-labels">
+          <span>0s</span>
+          <span>0.3s threshold</span>
+          <span>0.356s actual</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="compare">
+      <div class="compare-head">
+        <div class="metric-label">Metric</div>
+        <div class="col-name col-rf">Random Forest</div>
+        <div class="col-name col-nn">Neural Net</div>
+      </div>
+      <div class="compare-row">
+        <div class="metric-label">Test RMSE</div>
+        <div class="metric-val win">8.186s</div>
+        <div class="metric-val lose">8.542s</div>
+      </div>
+      <div class="compare-row">
+        <div class="metric-label">Test R²</div>
+        <div class="metric-val win">0.573</div>
+        <div class="metric-val lose">0.535</div>
+      </div>
+      <div class="compare-row">
+        <div class="metric-label">Training time</div>
+        <div class="metric-val win">2.91s</div>
+        <div class="metric-val lose">31.24s</div>
+      </div>
+      <div class="compare-row">
+        <div class="metric-label">Inference (single row)</div>
+        <div class="metric-val win">21.6ms</div>
+        <div class="metric-val lose">103.4ms</div>
+      </div>
+      <div class="compare-row">
+        <div class="metric-label">Artifact size</div>
+        <div class="metric-val lose">833.2 KB</div>
+        <div class="metric-val win">456.3 KB</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="evidence">
+    <div class="card confirms">
+      <div class="tag">Learning curves</div>
+      <p>RF wins at <strong>every training-set size</strong> tested (10%–100%). Gap narrows but never closes — more data isn't the fix.</p>
+    </div>
+    <div class="card confirms">
+      <div class="tag">Robustness shift</div>
+      <p>On unseen categories, RF's advantage <strong>widens</strong> (0.36s → 1.18s) rather than shrinking.</p>
+    </div>
+    <div class="card confirms">
+      <div class="tag">Entity embeddings</div>
+      <p>Follow-up fix for rare categories: <strong>no accuracy gain</strong>, and 10× more seed-to-seed variance.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Source: model-comparison-report.md · 08_neural-network-modeling.ipynb, run 2026-08-07</span>
+    <span class="confidence"><span class="dot"></span>High confidence — consistent across seeds, subgroups, and two follow-up experiments</span>
+  </div>
+</div>
+
+<style>.pf-back{position:fixed;left:12px;bottom:12px;z-index:2147483000;font:600 13px/1 system-ui,Segoe UI,Arial,sans-serif;background:#1f4e79;color:#fff;text-decoration:none;padding:9px 13px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.3);opacity:.92}.pf-back:hover{opacity:1}@media print{.pf-back{display:none}}</style><a class="pf-back" href="../projects/test-bench.html">&larr; Back to case study</a></body></html>

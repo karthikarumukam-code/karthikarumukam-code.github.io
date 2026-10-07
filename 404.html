@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page not found · Karthikeyan Arumugam</title>
+<meta name="description" content="Page not found">
+<meta name="theme-color" content="#1f4e79">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="index.html">Karthikeyan Arumugam</a>
+    <nav class="nav" aria-label="Main">
+      <a class="hide-xs" href="#projects">Projects</a>
+      <a class="hide-sm" href="#how-i-work">How I work</a>
+      <a class="hide-sm" href="#coursework">Coursework</a>
+      <a class="hide-sm" href="#background">Background</a>
+      <a href="#contact">Contact</a>
+      <button class="theme-btn" id="theme-btn" type="button" aria-label="Switch light or dark theme" title="Switch light or dark theme">&#9788;</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main"><div class="wrap narrow" style="padding:80px 20px">
+<h1>Page not found</h1>
+<p class="lead">That page does not exist. Head back to the portfolio.</p>
+<p><a class="btn" href="https://karthikarumukam-code.github.io/">Go to the portfolio</a></p>
+</div></main>
+<footer class="site-foot">
+  <div class="wrap">
+    <p>&copy; 2026 Karthikeyan Arumugam. Essen, Germany.</p>
+    <p>All projects shown are training or portfolio work. Aurelia Software GmbH is a fictional company from a course case. The site uses no cookies, trackers or external fonts.</p>
+  </div>
+</footer>
+<script>
+(function(){
+  var b=document.getElementById('theme-btn'); if(!b) return;
+  function cur(){var t=document.documentElement.getAttribute('data-theme'); if(t) return t; return (window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}
+  b.addEventListener('click',function(){var n=cur()==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',n); try{localStorage.setItem('theme',n);}catch(e){}});
+})();
+</script>
+</body>
+</html>

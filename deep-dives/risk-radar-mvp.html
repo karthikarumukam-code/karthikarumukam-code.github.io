@@ -1,0 +1,142 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Risk Radar MVP</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel-2:#1c2430; --border:#2a3441; --border-soft:#212b36;
+    --text:#e6edf3; --text-muted:#8b949e; --text-faint:#5c6773;
+    --accent:#39d3bb; --accent-soft:#12292a; --accent-ink:#7fe4d2;
+    --bad:#f0654f;
+    --sans:'IBM Plex Sans', system-ui, sans-serif; --mono:'IBM Plex Mono', ui-monospace, monospace;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -10px rgba(0,0,0,.55);
+  }
+  *{ box-sizing:border-box; }
+  body{ background:var(--bg); color:var(--text); font-family:var(--sans); display:flex; justify-content:center; padding:48px 20px; }
+
+  .slide{
+    width:100%; max-width:980px; background:var(--panel); border:1px solid var(--border);
+    border-radius:14px; box-shadow:var(--shadow); padding:40px 44px 32px;
+  }
+
+  .eyebrow{
+    font-family:var(--mono); font-size:11.5px; font-weight:600; letter-spacing:.11em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:8px;
+  }
+  h1{ font-size:28px; font-weight:700; letter-spacing:-.01em; margin:0 0 10px; }
+  .framing{ color:var(--text-muted); font-size:14px; max-width:70ch; margin:0 0 28px; line-height:1.55; }
+  .framing b{ color:var(--text); font-weight:600; }
+
+  .use-case{
+    border-left:3px solid var(--accent); background:var(--panel-2);
+    border-radius:0 8px 8px 0; padding:16px 20px 18px; margin:0 0 20px;
+  }
+  .use-case .col-label{ margin-bottom:8px; }
+  .use-case p{ margin:0; font-size:14.5px; line-height:1.6; color:var(--text); }
+
+  .user-row{ display:flex; gap:20px; flex-wrap:wrap; margin-top:12px; }
+  .user-chip{
+    display:flex; align-items:center; gap:10px; background:var(--panel);
+    border:1px solid var(--border); border-radius:8px; padding:9px 14px;
+  }
+  .user-chip .who{ font-size:13.5px; font-weight:600; color:var(--text); }
+  .user-chip .status{
+    font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:.04em;
+    text-transform:uppercase; padding:3px 8px; border-radius:100px; white-space:nowrap;
+  }
+  .user-chip .status.primary{ background:rgba(57,211,187,.16); color:var(--accent-ink); }
+  .user-chip .status.secondary{ background:var(--caution-soft, #2b2111); color:var(--caution, #d29922); }
+  .user-arrow{ color:var(--text-faint); align-self:center; font-size:13px; }
+
+  .cols{ display:grid; grid-template-columns:1.3fr 1fr; gap:32px; }
+  @media (max-width:760px){ .cols{ grid-template-columns:1fr; } }
+
+  .col-label{
+    font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.08em;
+    text-transform:uppercase; margin-bottom:14px; display:flex; align-items:center; gap:8px;
+  }
+  .col-label.in{ color:var(--accent-ink); }
+  .col-label.out{ color:var(--bad); }
+
+  ul.features{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:11px; }
+  ul.features li{ display:flex; gap:10px; align-items:flex-start; font-size:13.5px; line-height:1.5; color:var(--text); }
+  ul.features li::before{
+    content:"✓"; flex:none; width:18px; height:18px; border-radius:50%;
+    background:var(--accent-soft); border:1px solid var(--accent); color:var(--accent-ink);
+    font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center;
+    margin-top:2px; font-family:var(--mono);
+  }
+
+  ul.excluded{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:11px; }
+  ul.excluded li{ display:flex; gap:10px; align-items:flex-start; font-size:13.5px; line-height:1.5; color:var(--text-muted); }
+  ul.excluded li::before{
+    content:"✕"; flex:none; width:18px; height:18px; border-radius:50%;
+    background:rgba(240,101,79,.12); border:1px solid var(--bad); color:var(--bad);
+    font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center;
+    margin-top:2px; font-family:var(--mono);
+  }
+
+  footer{
+    margin-top:28px; padding-top:14px; border-top:1px solid var(--border-soft);
+    font-family:var(--mono); font-size:10.5px; color:var(--text-faint);
+  }
+</style>
+
+<div class="slide">
+  <div class="eyebrow">AI Project Risk Radar</div>
+  <h1>The MVP</h1>
+  <p class="framing"><b>Everything built is the MVP.</b> Nothing on the left needs to happen before testing this with a real PM — it's already done.</p>
+
+  <div class="use-case">
+    <div class="col-label in">Problem statement</div>
+    <p>A Project Manager's risk signals are scattered across separate documents &mdash; status reports, RAID logs, meeting minutes &mdash; so a compounding risk often isn't noticed until it's too late to do anything but escalate or absorb the overrun.</p>
+    <div class="user-row">
+      <div class="user-chip"><span class="who">IT Project Manager</span><span class="status primary">Key user</span></div>
+      <span class="user-arrow">&rarr; extends to</span>
+      <div class="user-chip"><span class="who">Program Manager / PMO</span><span class="status secondary">Not yet validated</span></div>
+    </div>
+  </div>
+
+  <div class="use-case">
+    <div class="col-label in">Use case</div>
+    <p>An IT Project Manager loads their own project's status report, RAID log, dependency register, project plan, and meeting minutes. The tool cross-checks these documents for risk patterns &mdash; compounding risks, Critical/High risks, and newly raised risks &mdash; and flags them immediately, with every flag traced back to its source, so the PM can act and update stakeholders before it becomes escalation-only.</p>
+  </div>
+
+  <div class="cols">
+    <div>
+      <div class="col-label in">MVP — built</div>
+      <ul class="features">
+        <li>Single-project dashboard: status report, RAID log, dependency register, project plan, meeting minutes</li>
+        <li>Rule-based extraction — deterministic, offline, no API key needed</li>
+        <li>LLM extraction (Anthropic / OpenRouter / Ollama) compared against the baseline</li>
+        <li>Risk correlation — compounding risk flagged when signals span multiple categories</li>
+        <li>Overdue project-plan tasks flagged as schedule risk</li>
+        <li>"New since your last report" 🆕 flagging</li>
+        <li>Deterministic scoring — Probability &times; Impact &times; Urgency, with a severity band</li>
+        <li>Evidence trail — every flag links back to its exact source</li>
+        <li>PM's own RAG shown next to the AI's read, disagreement surfaced, not hidden</li>
+        <li>Trend view across historical weekly reports</li>
+        <li>Upload Word, PDF, PPTX, or email files, not just plain text</li>
+        <li>Portfolio Overview — all projects side by side</li>
+        <li>Test suite proving it catches what it should — 65 tests, 11/11 recall</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="col-label out">Not in scope</div>
+      <ul class="excluded">
+        <li>No connection to Jira, Azure DevOps, or ServiceNow</li>
+        <li>No live monitoring — only checks when you run it</li>
+        <li>No custom-trained AI model, just a formula and rules</li>
+        <li>No automated actions — it flags, a human decides</li>
+        <li>No real multi-project portfolio management</li>
+        <li>No privacy/security design for real documents naming real people</li>
+        <li>No way for a flagged team to contest a flag</li>
+        <li>RAID log, dependency register, and plan still need to be CSV files</li>
+        <li>Outlook <code>.msg</code> files aren't supported, only <code>.eml</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>ai-project-risk-radar/ &middot; PRODUCT_SCOPE.md</footer>
+</div>
+
+<style>.pf-back{position:fixed;left:12px;bottom:12px;z-index:2147483000;font:600 13px/1 system-ui,Segoe UI,Arial,sans-serif;background:#1f4e79;color:#fff;text-decoration:none;padding:9px 13px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.3);opacity:.92}.pf-back:hover{opacity:1}@media print{.pf-back{display:none}}</style><a class="pf-back" href="../projects/risk-radar.html">&larr; Back to case study</a></body></html>
